@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
+  <title>SEL ACHS · Reportes de Productividad</title>
+  <style>
+/* ══════════════════════════════════════════════════════════════════
+   home.html — Índice dinámico SEL ACHS
+   Estética: control room / terminal industrial · oscuro y preciso
+   Tipografía: Bebas Neue (display) + IBM Plex Mono (datos) + Outfit (body)
+   ══════════════════════════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;500&family=Outfit:wght@400;500;600;700&display=swap');
+
+:root {
+  /* Paleta SEL */
+  --az:     #002A6C;
+  --bl:     #348EFE;
+  --vd:     #7CFF44;
+
+  /* Superficie */
+  --bg:     #080C14;
+  --s1:     #0D1420;
+  --s2:     #121A2B;
+  --s3:     #182035;
+  --bdr:    rgba(52,142,254,.12);
+  --bdr2:   rgba(255,255,255,.06);
+
+  /* Texto */
+  --tx:     #E8EEF8;
+  --tx2:    #8A97B0;
+  --tx3:    #4A5568;
+
+  /* Semánticos */
+  --up:     #3FB950;
+  --dn:     #F85149;
+  --warn:   #E3B341;
+
+  /* Tipo */
+  --fn-d:   'Bebas Neue', sans-serif;
+  --fn-m:   'IBM Plex Mono', monospace;
+  --fn-b:   'Outfit', sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+body {
+  font-family: var(--fn-b);
+  background: var(--bg);
+  color: var(--tx);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── SCANLINES ───────────────────────────────────────────────────── */
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,.08) 2px,
+    rgba(0,0,0,.08) 4px
+  );
+}
+
+/* ── GRID BACKGROUND ────────────────────────────────────────────── */
+body::after {
+  content: '';
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background-image:
+    linear-gradient(rgba(52,142,254,.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(52,142,254,.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* ── GLOW TOP ───────────────────────────────────────────────────── */
+.glow-top {
+  position: fixed; top: 0; left: 50%; transform: translateX(-50%);
+  width: 600px; height: 1px; z-index: 1;
+  background: linear-gradient(90deg, transparent, var(--bl), var(--vd), var(--bl), transparent);
+  box-shadow: 0 0 40px 8px rgba(52,142,254,.25);
+}
+
+/* ══ HEADER ══════════════════════════════════════════════════════ */
+header {
+  position: relative; z-index: 20;
+  border-bottom: 1px solid var(--bdr);
+  background: rgba(8,12,20,.92);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  padding: 0 24px;
+  display: flex; align-items: center; height: 56px; gap: 16px;
+}
+.hdr-logo {
+  display: flex; align-items: center; gap: 10px; flex-shrink: 0;
+}
+.hdr-mark {
+  width: 32px; height: 32px; border-radius: 6px;
+  background: var(--az); border: 1px solid rgba(52,142,254,.4);
+  display: flex; align-items: center; justify-content: center;
+  position: relative;
+}
+.hdr-mark::after {
+  content: ''; position: absolute; inset: -1px; border-radius: 7px;
+  background: linear-gradient(135deg, rgba(124,255,68,.3), transparent 60%);
+  pointer-events: none;
+}
+.hdr-mark span {
+  font-family: var(--fn-d); font-size: 15px; color: var(--vd);
+  line-height: 1; letter-spacing: .04em; position: relative; z-index: 1;
+}
+.hdr-title {
+  font-family: var(--fn-d); font-size: 20px; letter-spacing: .06em;
+  color: var(--tx);
+}
+.hdr-title em { color: var(--vd); font-style: normal; }
+.hdr-sep { width: 1px; height: 20px; background: var(--bdr2); flex-shrink: 0; }
+.hdr-sub {
+  font-family: var(--fn-m); font-size: 9.5px; color: var(--tx3);
+  letter-spacing: .12em; text-transform: uppercase;
+}
+.hdr-right {
+  margin-left: auto; display: flex; align-items: center; gap: 12px;
+}
+.pulse-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--up); box-shadow: 0 0 8px rgba(63,185,80,.7);
+  animation: blink 2.4s ease-in-out infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+.hdr-ts {
+  font-family: var(--fn-m); font-size: 9px; color: var(--tx3);
+}
+
+/* ══ MAIN ════════════════════════════════════════════════════════ */
+main {
+  position: relative; z-index: 5;
+  max-width: 1100px; margin: 0 auto;
+  padding: 40px 24px 80px;
+}
+
+/* ── HERO ───────────────────────────────────────────────────────── */
+.hero {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 24px; align-items: end;
+  margin-bottom: 40px;
+  padding-bottom: 32px;
+  border-bottom: 1px solid var(--bdr2);
+}
+.hero-text {}
+.hero-label {
+  font-family: var(--fn-m); font-size: 9px; color: var(--vd);
+  letter-spacing: .2em; text-transform: uppercase;
+  margin-bottom: 10px;
+  display: flex; align-items: center; gap: 8px;
+}
+.hero-label::before {
+  content: ''; display: inline-block; width: 16px; height: 1px;
+  background: var(--vd); opacity: .6;
+}
+.hero h1 {
+  font-family: var(--fn-d); font-size: clamp(42px, 7vw, 72px);
+  line-height: .95; letter-spacing: .02em; color: var(--tx);
+  text-transform: uppercase;
+}
+.hero h1 em { color: var(--vd); font-style: normal; }
+.hero-desc {
+  font-size: 12.5px; color: var(--tx2); margin-top: 12px;
+  line-height: 1.7; max-width: 400px;
+}
+.hero-stats {
+  display: flex; flex-direction: column; gap: 2px; flex-shrink: 0;
+  text-align: right;
+}
+.hs-label { font-family: var(--fn-m); font-size: 8px; color: var(--tx3); letter-spacing: .14em; text-transform: uppercase; }
+.hs-val   { font-family: var(--fn-d); font-size: 48px; color: var(--tx); line-height: 1; }
+.hs-val span { color: var(--vd); }
+.hs-sub   { font-family: var(--fn-m); font-size: 9px; color: var(--tx2); margin-top: 2px; }
+
+/* ── SCANNING BANNER (estado mientras carga) ────────────────────── */
+.scan-banner {
+  background: var(--s1); border: 1px solid var(--bdr);
+  border-radius: 10px; padding: 18px 22px;
+  display: flex; align-items: center; gap: 14px;
+  margin-bottom: 32px; overflow: hidden; position: relative;
+}
+.scan-banner::after {
+  content: ''; position: absolute; top: 0; left: -100%;
+  width: 60%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(52,142,254,.06), transparent);
+  animation: sweep 2.4s ease-in-out infinite;
+}
+@keyframes sweep { to { left: 200%; } }
+.scan-icon { font-family: var(--fn-m); font-size: 11px; color: var(--vd); flex-shrink: 0; }
+.scan-text { font-family: var(--fn-m); font-size: 10px; color: var(--tx2); flex: 1; }
+.scan-progress { font-family: var(--fn-m); font-size: 10px; color: var(--bl); flex-shrink: 0; }
+.scan-banner.done { display: none; }
+
+/* ── ERROR BANNER ───────────────────────────────────────────────── */
+.err-banner {
+  background: rgba(248,81,73,.06); border: 1px solid rgba(248,81,73,.2);
+  border-radius: 10px; padding: 14px 18px; margin-bottom: 24px;
+  font-family: var(--fn-m); font-size: 10.5px; color: #ff9494; line-height: 1.7;
+  display: none;
+}
+.err-banner.show { display: block; }
+.err-banner code { background: rgba(255,255,255,.08); padding: 1px 5px; border-radius: 4px; }
+
+/* ── SECTION HEADER ─────────────────────────────────────────────── */
+.sec-hdr {
+  display: flex; align-items: center; gap: 14px; margin-bottom: 18px;
+}
+.sec-hdr h2 {
+  font-family: var(--fn-d); font-size: 18px; letter-spacing: .06em;
+  color: var(--tx); text-transform: uppercase; white-space: nowrap;
+}
+.sec-line { flex: 1; height: 1px; background: var(--bdr2); }
+.sec-badge {
+  font-family: var(--fn-m); font-size: 9px; color: var(--tx3);
+  border: 1px solid var(--bdr2); border-radius: 5px; padding: 2px 8px;
+  flex-shrink: 0;
+}
+
+/* ══ REPORT GRID ═════════════════════════════════════════════════ */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 16px;
+  margin-bottom: 52px;
+}
+
+/* ══ REPORT CARD ═════════════════════════════════════════════════ */
+.rcard {
+  background: var(--s1);
+  border: 1px solid var(--bdr2);
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+  display: flex; flex-direction: column;
+  transition: border-color .2s, transform .2s, box-shadow .22s;
+  animation: cardIn .36s ease both;
+  position: relative;
+}
+@keyframes cardIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+
+.rcard::before {
+  content: ''; position: absolute; inset: 0; border-radius: 12px;
+  background: linear-gradient(135deg, rgba(52,142,254,.04) 0%, transparent 50%);
+  pointer-events: none; opacity: 0; transition: opacity .2s;
+}
+.rcard:hover {
+  border-color: rgba(52,142,254,.35);
+  transform: translateY(-4px);
+  box-shadow: 0 16px 48px rgba(0,0,0,.5), 0 0 0 1px rgba(52,142,254,.12);
+}
+.rcard:hover::before { opacity: 1; }
+.rcard:hover .card-arrow { transform: translate(2px,-2px); opacity: 1; color: var(--vd); }
+.rcard:hover .card-week  { color: var(--vd); }
+.rcard.latest { border-color: rgba(124,255,68,.18); }
+.rcard.latest .card-top { background: linear-gradient(135deg, rgba(0,42,108,.9) 0%, rgba(0,58,100,.7) 100%); }
+
+/* Franja superior de color */
+.card-stripe {
+  height: 3px;
+  background: linear-gradient(90deg, var(--az), var(--bl), var(--vd));
+}
+.rcard.latest .card-stripe {
+  background: linear-gradient(90deg, var(--vd), var(--bl), var(--vd));
+  box-shadow: 0 0 12px rgba(124,255,68,.3);
+}
+
+/* Card top */
+.card-top {
+  background: linear-gradient(135deg, rgba(0,42,108,.7) 0%, rgba(13,20,32,.8) 100%);
+  padding: 18px 20px 16px;
+  border-bottom: 1px solid var(--bdr2);
+  display: flex; align-items: flex-start; justify-content: space-between;
+}
+.card-left  {}
+.card-badge {
+  font-family: var(--fn-m); font-size: 8px; color: rgba(255,255,255,.4);
+  letter-spacing: .2em; text-transform: uppercase; margin-bottom: 5px;
+  display: flex; align-items: center; gap: 6px;
+}
+.latest-pill {
+  background: rgba(124,255,68,.12); color: var(--vd);
+  border: 1px solid rgba(124,255,68,.2);
+  border-radius: 4px; padding: 1px 5px;
+  font-size: 7.5px; letter-spacing: .12em;
+}
+.card-week {
+  font-family: var(--fn-d); font-size: 36px; letter-spacing: .04em;
+  color: var(--tx); line-height: .95; transition: color .2s;
+}
+.card-period { font-family: var(--fn-m); font-size: 9px; color: var(--tx3); margin-top: 4px; }
+.card-arrow  { font-size: 20px; color: rgba(255,255,255,.2); transition: all .2s; line-height: 1; }
+
+/* Card body */
+.card-body { padding: 16px 20px; flex: 1; display: flex; flex-direction: column; gap: 14px; }
+
+/* KPI mini row */
+.card-kpis {
+  display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px;
+}
+.ck {
+  background: rgba(255,255,255,.025); border: 1px solid var(--bdr2);
+  border-radius: 7px; padding: 8px 9px;
+}
+.ck-l { font-family: var(--fn-m); font-size: 7px; color: var(--tx3); letter-spacing: .1em; text-transform: uppercase; margin-bottom: 3px; }
+.ck-v { font-family: var(--fn-d); font-size: 15px; color: var(--tx); line-height: 1; }
+.ck-p { font-family: var(--fn-m); font-size: 8.5px; margin-top: 2px; }
+.up { color: var(--up); }
+.dn { color: var(--dn); }
+.mu { color: var(--tx3); }
+
+/* Territory bars */
+.terr-bars { display: flex; flex-direction: column; gap: 6px; }
+.tb-row { display: flex; align-items: center; gap: 8px; }
+.tb-name { font-family: var(--fn-m); font-size: 8px; color: var(--tx3); width: 42px; flex-shrink: 0; letter-spacing: .08em; }
+.tb-track { flex: 1; height: 3px; background: rgba(255,255,255,.05); border-radius: 2px; overflow: hidden; }
+.tb-fill  { height: 3px; border-radius: 2px; }
+.tb-pct   { font-family: var(--fn-m); font-size: 8.5px; width: 40px; text-align: right; flex-shrink: 0; }
+
+/* Highlights */
+.card-hls { display: flex; flex-direction: column; gap: 4px; }
+.hl {
+  display: flex; align-items: flex-start; gap: 6px;
+  padding: 5px 8px; border-radius: 6px; border: 1px solid transparent;
+  font-size: 10px; line-height: 1.5; color: var(--tx2);
+}
+.hl.logro  { background: rgba(63,185,80,.04);  border-color: rgba(63,185,80,.1);  }
+.hl.alerta { background: rgba(227,179,65,.04);  border-color: rgba(227,179,65,.1); }
+.hl-ico    { flex-shrink: 0; font-size: 9px; margin-top: 1px; }
+.hl.logro .hl-ico  { color: var(--up); }
+.hl.alerta .hl-ico { color: var(--warn); }
+
+/* Card footer */
+.card-foot {
+  padding: 10px 20px;
+  border-top: 1px solid var(--bdr2);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.cf-date { font-family: var(--fn-m); font-size: 8.5px; color: var(--tx3); }
+.cf-cta  { font-family: var(--fn-m); font-size: 9px; color: var(--bl); display: flex; align-items: center; gap: 4px; }
+
+/* ══ EMPTY STATE ════════════════════════════════════════════════ */
+.empty {
+  grid-column: 1 / -1;
+  text-align: center; padding: 56px 24px;
+  border: 1px dashed rgba(255,255,255,.08); border-radius: 12px;
+}
+.empty-ico { font-size: 36px; opacity: .3; margin-bottom: 16px; }
+.empty h3  { font-family: var(--fn-d); font-size: 22px; color: var(--tx3); letter-spacing: .06em; text-transform: uppercase; margin-bottom: 6px; }
+.empty p   { font-size: 12px; color: var(--tx3); line-height: 1.7; max-width: 400px; margin: 0 auto; }
+.empty code { font-family: var(--fn-m); background: var(--s2); padding: 1px 5px; border-radius: 4px; font-size: 11px; color: var(--vd); }
+
+/* ══ INSTRUCCIONES ══════════════════════════════════════════════ */
+.howto {
+  background: var(--s1); border: 1px solid var(--bdr2);
+  border-radius: 12px; overflow: hidden;
+}
+.howto-hdr {
+  padding: 18px 24px 14px;
+  border-bottom: 1px solid var(--bdr2);
+  display: flex; align-items: center; gap: 10px;
+}
+.howto-hdr h3 { font-family: var(--fn-d); font-size: 16px; letter-spacing: .06em; text-transform: uppercase; color: var(--tx); }
+.howto-hdr-badge { font-family: var(--fn-m); font-size: 8px; color: var(--vd); background: rgba(124,255,68,.1); border: 1px solid rgba(124,255,68,.15); border-radius: 4px; padding: 2px 7px; letter-spacing: .1em; }
+.howto-body { padding: 22px 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+
+.steps { display: flex; flex-direction: column; gap: 14px; }
+.step  { display: flex; gap: 12px; align-items: flex-start; }
+.step-n {
+  width: 24px; height: 24px; border-radius: 6px; flex-shrink: 0;
+  background: rgba(52,142,254,.1); border: 1px solid rgba(52,142,254,.2);
+  color: var(--bl); font-family: var(--fn-m); font-size: 10px; font-weight: 500;
+  display: flex; align-items: center; justify-content: center; margin-top: 1px;
+}
+.step-body { flex: 1; }
+.step-title { font-size: 12px; font-weight: 600; color: var(--tx); margin-bottom: 2px; }
+.step-desc  { font-size: 11px; color: var(--tx2); line-height: 1.6; }
+.step-desc code { font-family: var(--fn-m); background: var(--s2); padding: 1px 5px; border-radius: 4px; font-size: 10px; color: var(--vd); }
+
+.tree-box {
+  background: var(--bg); border: 1px solid var(--bdr2); border-radius: 8px;
+  padding: 16px 18px; font-family: var(--fn-m); font-size: 10.5px; line-height: 1.9;
+  color: var(--tx3);
+}
+.tree-box .f-dir  { color: var(--vd); }
+.tree-box .f-main { color: var(--tx); }
+.tree-box .f-data { color: var(--warn); }
+.tree-box .f-sys  { color: var(--bl); }
+.tree-box .f-note { color: var(--tx3); opacity: .5; }
+
+.tip-box {
+  margin-top: 12px; padding: 11px 14px;
+  background: rgba(124,255,68,.04); border: 1px solid rgba(124,255,68,.1);
+  border-radius: 7px; font-size: 11px; color: var(--tx2); line-height: 1.6;
+}
+.tip-box strong { color: var(--vd); }
+.tip-box code { font-family: var(--fn-m); font-size: 10px; color: var(--vd); }
+
+/* ── FOOTER ─────────────────────────────────────────────────────── */
+footer {
+  position: relative; z-index: 5;
+  border-top: 1px solid var(--bdr2);
+  padding: 16px 24px;
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  flex-wrap: wrap;
+}
+.ft-brand { font-family: var(--fn-m); font-size: 9px; color: var(--tx3); }
+.ft-brand strong { color: var(--vd); }
+.ft-info  { font-family: var(--fn-m); font-size: 9px; color: var(--tx3); }
+
+/* ── RESPONSIVE ─────────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  main { padding: 28px 16px 60px; }
+  .hero { grid-template-columns: 1fr; }
+  .hero-stats { text-align: left; flex-direction: row; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+  .hs-val { font-size: 32px; }
+  .howto-body { grid-template-columns: 1fr; }
+  .card-kpis { grid-template-columns: 1fr 1fr; }
+  .hdr-sub, .hdr-sep { display: none; }
+}
+  </style>
+</head>
+<body>
+
+<div class="glow-top"></div>
+
+<!-- ═══ HEADER ════════════════════════════════════════════════════ -->
+<header>
+  <div class="hdr-logo">
+    <div class="hdr-mark"><span>SEL</span></div>
+    <div class="hdr-title">SEL <em>ACHS</em></div>
+    <div class="hdr-sep"></div>
+    <div class="hdr-sub">Productividad Territorial</div>
+  </div>
+  <div class="hdr-right">
+    <div class="hdr-ts" id="hdr-ts"></div>
+    <div class="pulse-dot" title="Sistema activo"></div>
+  </div>
+</header>
+
+<!-- ═══ MAIN ══════════════════════════════════════════════════════ -->
+<main>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-text">
+      <div class="hero-label">Sistema de reportes · SEL ACHS</div>
+      <h1>Historial<br><em>Semanal</em></h1>
+      <p class="hero-desc">
+        Reportes de productividad por territorio organizados por semana.
+        El sistema detecta automáticamente los archivos disponibles.
+      </p>
+    </div>
+    <div class="hero-stats">
+      <div class="hs-label">Reportes encontrados</div>
+      <div class="hs-val"><span id="total-count">—</span></div>
+      <div class="hs-sub" id="rango-str">escaneando...</div>
+    </div>
+  </div>
+
+  <!-- SCAN BANNER -->
+  <div class="scan-banner" id="scan-banner">
+    <div class="scan-icon">▶ SCAN</div>
+    <div class="scan-text" id="scan-text">Buscando reportes disponibles...</div>
+    <div class="scan-progress" id="scan-prog">0%</div>
+  </div>
+
+  <!-- ERROR -->
+  <div class="err-banner" id="err-banner">
+    <strong>⚠ Modo file:// detectado</strong> — Los reportes no pueden cargarse directamente
+    desde el sistema de archivos por restricciones de seguridad del browser.<br><br>
+    Sirve el proyecto con un servidor local: en la carpeta <code>sel_app/</code> ejecuta<br>
+    <code>python3 -m http.server 8080</code> y abre
+    <code>http://localhost:8080/home.html</code>
+  </div>
+
+  <!-- REPORTS -->
+  <div class="sec-hdr">
+    <h2>Reportes disponibles</h2>
+    <div class="sec-line"></div>
+    <div class="sec-badge" id="sec-badge">escaneando...</div>
+  </div>
+  <div class="grid" id="grid"></div>
+
+  <!-- INSTRUCCIONES -->
+  <div class="howto">
+    <div class="howto-hdr">
+      <h3>Cómo agregar un reporte</h3>
+      <span class="howto-hdr-badge">GUÍA RÁPIDA</span>
+    </div>
+    <div class="howto-body">
+
+      <div class="steps">
+        <div class="step">
+          <div class="step-n">1</div>
+          <div class="step-body">
+            <div class="step-title">Recibir el archivo del análisis</div>
+            <div class="step-desc">Claude genera un archivo HTML autónomo con nombre
+              <code>s{semana}{año}.html</code>. Por ejemplo <code>s082026.html</code>
+              para la semana 8 de 2026.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-n">2</div>
+          <div class="step-body">
+            <div class="step-title">Soltar el archivo en la carpeta</div>
+            <div class="step-desc">Copiar o arrastrar el archivo <code>s082026.html</code>
+              dentro de la misma carpeta <code>sel_app/</code> donde está este
+              <code>home.html</code>.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-n">3</div>
+          <div class="step-body">
+            <div class="step-title">Refrescar el índice</div>
+            <div class="step-desc">Recargar esta página con <code>F5</code>.
+              El sistema escanea automáticamente y la tarjeta del nuevo reporte
+              aparece al tope de la lista. <strong>No hay nada más que hacer.</strong>
+            </div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-n">4</div>
+          <div class="step-body">
+            <div class="step-title">Servidor local (obligatorio)</div>
+            <div class="step-desc">Por seguridad del browser, abrir con servidor local.
+              En la carpeta ejecutar:<br>
+              <code>python3 -m http.server 8080</code><br>
+              Luego abrir <code>http://localhost:8080/home.html</code>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="tree-box">
+          <span class="f-dir">sel_app/</span><br>
+          ├── <span class="f-main">home.html</span> &nbsp;&nbsp;&nbsp;&nbsp;<span class="f-note">← este índice</span><br>
+          ├── <span class="f-sys">sel.css</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="f-note">← estilos (no editar)</span><br>
+          ├── <span class="f-sys">sel.engine.js</span> <span class="f-note">← motor (no editar)</span><br>
+          ├── <span class="f-data">s022026.html</span> &nbsp;<span class="f-note">← reporte S2 2026</span><br>
+          ├── <span class="f-data">s032026.html</span> &nbsp;<span class="f-note">← reporte S3 2026</span><br>
+          ├── &nbsp; &nbsp; &nbsp; <span class="f-note">... más reportes ...</span><br>
+          └── <span class="f-data">s072026.html</span> &nbsp;<span class="f-note">← reporte S7 2026 ✓</span>
+        </div>
+        <div class="tip-box">
+          <strong>💡 Naming convention:</strong><br>
+          <code>s{SS}{YYYY}.html</code> — semana con 2 dígitos + año 4 dígitos.<br>
+          Ejemplos: <code>s012026.html</code> · <code>s122025.html</code> · <code>s522025.html</code>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</main>
+
+<!-- ═══ FOOTER ════════════════════════════════════════════════════ -->
+<footer>
+  <div class="ft-brand">▐ <strong>SEL</strong> ACHS · Sistema de reportes v2.0</div>
+  <div class="ft-info" id="ft-info"></div>
+</footer>
+
+<script>
+/* ══════════════════════════════════════════════════════════════════
+   home.js — Auto-discovery de reportes por fetch()
+
+   Lógica:
+   - Genera todos los nombres posibles: s{01..52}{2024..2026}.html
+   - Hace fetch() HEAD a cada uno en paralelo (rápido)
+   - Si responde 200 → existe, intenta parsear SEL_CARD desde el HTML
+   - Si falla (404 o error) → lo omite silenciosamente
+   - Renderiza tarjetas en orden DESC (más reciente primero)
+
+   Para funcionar necesita servidor local (fetch() sobre file:// falla).
+   ══════════════════════════════════════════════════════════════════ */
+
+const ANOS   = [2026, 2025, 2024];  // años a escanear
+const SEMS   = Array.from({length:52},(_,i)=>i+1);  // S1..S52
+const T_COLORS = { norte:'#002A6C', metro:'#348EFE', sur:'#3a8c1a' };
+const T_LABELS = { norte:'NORTE', metro:'METRO', sur:'SUR' };
+
+// ── UI REFS ────────────────────────────────────────────────────────
+const $grid    = document.getElementById('grid');
+const $scan    = document.getElementById('scan-banner');
+const $scanTxt = document.getElementById('scan-text');
+const $scanPrg = document.getElementById('scan-prog');
+const $secBadg = document.getElementById('sec-badge');
+const $count   = document.getElementById('total-count');
+const $rango   = document.getElementById('rango-str');
+const $err     = document.getElementById('err-banner');
+const $ftInfo  = document.getElementById('ft-info');
+
+// ── TIMESTAMP ──────────────────────────────────────────────────────
+const now = new Date();
+document.getElementById('hdr-ts').textContent =
+  now.toLocaleString('es-CL', {dateStyle:'short', timeStyle:'short'});
+$ftInfo.textContent = 'Última actualización: ' + now.toLocaleString('es-CL', {dateStyle:'short', timeStyle:'short'});
+
+// ── DETECTAR file:// ───────────────────────────────────────────────
+if (location.protocol === 'file:') {
+  $err.classList.add('show');
+  $scan.classList.add('done');
+  $grid.innerHTML = emptyState('Servidor local requerido',
+    'Abre esta página con <code>python3 -m http.server 8080</code> y visita <code>http://localhost:8080/home.html</code>');
+  $secBadg.textContent = 'sin servidor local';
+  $count.textContent = '—';
+  $rango.textContent = 'usar http://localhost';
+} else {
+  init();
+}
+
+// ── INIT ──────────────────────────────────────────────────────────
+async function init() {
+  const candidates = [];
+  for (const a of ANOS)
+    for (const s of SEMS)
+      candidates.push({ sem: s, anio: a, file: `s${String(s).padStart(2,'0')}${a}.html` });
+
+  const total = candidates.length;
+  let checked = 0;
+  const found = [];
+
+  // Escanear en lotes de 12 para no saturar
+  const BATCH = 12;
+  for (let i = 0; i < candidates.length; i += BATCH) {
+    const batch = candidates.slice(i, i + BATCH);
+    const results = await Promise.allSettled(batch.map(c => checkFile(c)));
+    results.forEach((r, j) => {
+      if (r.status === 'fulfilled' && r.value) found.push(r.value);
+    });
+    checked += batch.length;
+    const pct = Math.round(checked / total * 100);
+    $scanPrg.textContent = pct + '%';
+    $scanTxt.textContent = `Escaneando ${candidates[i].file} ... (${found.length} encontrado${found.length !== 1 ? 's' : ''})`;
+  }
+
+  // Ordenar DESC: año desc, semana desc
+  found.sort((a, b) => b.anio !== a.anio ? b.anio - a.anio : b.sem - a.sem);
+
+  // Ocultar scanner
+  $scan.classList.add('done');
+
+  // Actualizar stats
+  $count.textContent   = found.length;
+  $secBadg.textContent = found.length + (found.length === 1 ? ' reporte' : ' reportes');
+
+  if (found.length > 0) {
+    const last  = found[0];
+    const first = found[found.length - 1];
+    $rango.textContent = `S${String(first.sem).padStart(2,'0')}/${first.anio} → S${String(last.sem).padStart(2,'0')}/${last.anio}`;
+  } else {
+    $rango.textContent = 'ningún reporte encontrado';
+  }
+
+  // Render
+  if (found.length === 0) {
+    $grid.innerHTML = emptyState(
+      'Sin reportes aún',
+      'Coloca archivos <code>s{SS}{YYYY}.html</code> en la misma carpeta y recarga.'
+    );
+    return;
+  }
+
+  $grid.innerHTML = '';
+  found.forEach((r, i) => {
+    const card = buildCard(r, i === 0);
+    card.style.animationDelay = Math.min(i * 50, 300) + 'ms';
+    $grid.appendChild(card);
+  });
+}
+
+// ── CHECK FILE: HEAD + parse SEL_CARD ─────────────────────────────
+async function checkFile(c) {
+  try {
+    // Primero HEAD para ver si existe (rápido)
+    const head = await fetch(c.file, { method: 'HEAD', cache: 'no-cache' });
+    if (!head.ok) return null;
+
+    // Existe → GET para parsear SEL_CARD
+    const res  = await fetch(c.file, { cache: 'no-cache' });
+    const html = await res.text();
+
+    // Buscar variable SEL_CARD en el HTML
+    const match = html.match(/const\s+SEL_CARD\s*=\s*(\{[\s\S]*?\});/);
+    if (match) {
+      try {
+        // eslint-disable-next-line no-new-func
+        const card = (new Function('return ' + match[1]))();
+        return { ...c, ...card, _hasCard: true };
+      } catch {}
+    }
+
+    // Fallback: sin SEL_CARD, mostrar tarjeta mínima
+    return { ...c, _hasCard: false };
+  } catch {
+    return null;
+  }
+}
+
+// ── BUILD CARD ────────────────────────────────────────────────────
+function buildCard(r, isLatest) {
+  const a = document.createElement('a');
+  a.href  = r.file;
+  a.className = 'rcard' + (isLatest ? ' latest' : '');
+  a.setAttribute('aria-label', `Abrir reporte semana ${r.sem} ${r.anio}`);
+
+  const semStr = 'S' + String(r.sem).padStart(2, '0');
+  const fmt    = n => n != null ? Math.round(n).toLocaleString('es-CL') : '—';
+  const fmtP   = p => p == null ? '' :
+    `<span class="${p >= 0 ? 'up' : 'dn'}">${p >= 0 ? '+' : ''}${p.toFixed(1)}%</span>`;
+
+  // Si tiene datos ricos (SEL_CARD)
+  const kpis  = r.kpis  || {};
+  const terrs = r.territorios || {};
+  const hls   = (r.destacados || []).slice(0, 3);
+  const maxP  = Math.max(...Object.values(terrs).map(t => Math.abs(t.pct || 0)), 1);
+  const fecha = r.fecha ? formatDate(r.fecha) : '';
+  const titulo = r.titulo || `Semana ${r.sem} · ${r.anio}`;
+
+  // Territorio bars HTML
+  const terrHTML = Object.entries(terrs).length > 0
+    ? `<div class="terr-bars">
+        ${Object.entries(terrs).map(([k, t]) => `
+          <div class="tb-row">
+            <div class="tb-name">${T_LABELS[k] || k.toUpperCase()}</div>
+            <div class="tb-track">
+              <div class="tb-fill" style="width:${Math.min(100, Math.abs(t.pct||0)/maxP*100)}%;background:${T_COLORS[k]||'#348EFE'}"></div>
+            </div>
+            <div class="tb-pct ${(t.pct||0) >= 0 ? 'up' : 'dn'}">${(t.pct||0) >= 0 ? '+' : ''}${(t.pct||0).toFixed(1)}%</div>
+          </div>`).join('')}
+      </div>` : '';
+
+  // Highlights HTML
+  const hlHTML = hls.length > 0
+    ? `<div class="card-hls">
+        ${hls.map(h => `
+          <div class="hl ${h.tipo || 'logro'}">
+            <span class="hl-ico">${h.tipo === 'alerta' ? '▲' : '●'}</span>
+            ${h.texto}
+          </div>`).join('')}
+      </div>` : '';
+
+  // KPIs HTML
+  const kpisHTML = r._hasCard
+    ? `<div class="card-kpis">
+        <div class="ck">
+          <div class="ck-l">Total</div>
+          <div class="ck-v">${kpis.total != null ? (kpis.total/1000).toFixed(1)+'K' : '—'}</div>
+          <div class="ck-p">${fmtP(kpis.pct)}</div>
+        </div>
+        <div class="ck">
+          <div class="ck-l">Últ. semana</div>
+          <div class="ck-v">${kpis.s7 != null ? (kpis.s7/1000).toFixed(1)+'K' : '—'}</div>
+          <div class="ck-p">${fmtP(kpis.s7Pct)}</div>
+        </div>
+        <div class="ck">
+          <div class="ck-l">Período</div>
+          <div class="ck-v" style="font-size:11px;line-height:1.3">${r.subtitulo||'S1–'+semStr}</div>
+          <div class="ck-p mu">${r.anio}</div>
+        </div>
+      </div>` : `
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--tx3);padding:6px 0">
+        Reporte disponible · sin metadata
+      </div>`;
+
+  a.innerHTML = `
+    <div class="card-stripe"></div>
+    <div class="card-top">
+      <div class="card-left">
+        <div class="card-badge">
+          ${isLatest ? '<span class="latest-pill">ÚLTIMO</span>' : ''}
+          Reporte semanal
+        </div>
+        <div class="card-week">${semStr}</div>
+        <div class="card-period">${titulo}${fecha ? ' · ' + fecha : ''}</div>
+      </div>
+      <div class="card-arrow">↗</div>
+    </div>
+    <div class="card-body">
+      ${kpisHTML}
+      ${terrHTML}
+      ${hlHTML}
+    </div>
+    <div class="card-foot">
+      <div class="cf-date">${r.file}</div>
+      <div class="cf-cta">Ver reporte →</div>
+    </div>`;
+
+  return a;
+}
+
+// ── EMPTY STATE ───────────────────────────────────────────────────
+function emptyState(title, msg) {
+  return `<div class="empty">
+    <div class="empty-ico">📂</div>
+    <h3>${title}</h3>
+    <p>${msg}</p>
+  </div>`;
+}
+
+// ── FORMAT DATE ───────────────────────────────────────────────────
+function formatDate(iso) {
+  if (!iso) return '';
+  try {
+    return new Date(iso + 'T12:00:00').toLocaleDateString('es-CL', {day:'numeric',month:'short',year:'numeric'});
+  } catch { return iso; }
+}
+</script>
+</body>
+</html>
