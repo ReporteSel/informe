@@ -1,0 +1,1398 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
+  <title>SEL ACHS · S8 2026 · Productividad Territorial</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.2.0/chartjs-plugin-datalabels.min.js"></script>
+  <style>
+:root{
+  --az:#002A6C;--bl:#348EFE;--vd:#7CFF44;--gr:#3a8c1a;
+  --bg:#E9EADD;--card:#F2F3E8;--body:#D5D6C9;--enc:#3F3F3F;
+  --g1:#F4F4F4;--g2:#E4E4E4;--bdr:rgba(0,0,0,.08);
+  --tx:#1a1a1a;--mu:#6b7280;--red:#cc2200;--green:#00A550;
+  --warn:#d97706;
+  --nav-h:56px;--r:14px;
+  --fn:'Segoe UI',system-ui,sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{font-family:var(--fn);background:var(--body);color:var(--tx);min-height:100vh}
+.nav{position:sticky;top:0;z-index:300;background:var(--az);height:var(--nav-h);display:flex;align-items:center;box-shadow:0 2px 16px rgba(0,42,108,.4)}
+.nav-brand{padding:0 14px;color:#fff;font-weight:800;font-size:13px;letter-spacing:.12em;white-space:nowrap;flex-shrink:0;border-right:1px solid rgba(255,255,255,.12);margin-right:4px}
+.nav-tabs{display:flex;align-items:center;flex:1;height:100%;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.nav-tabs::-webkit-scrollbar{display:none}
+.tbtn{flex-shrink:0;height:var(--nav-h);padding:0 13px;background:transparent;border:none;border-bottom:3px solid transparent;color:rgba(255,255,255,.5);font-family:var(--fn);font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:all .2s;white-space:nowrap}
+.tbtn:hover{color:rgba(255,255,255,.85);background:rgba(255,255,255,.05)}
+.tbtn.active{color:var(--vd);border-bottom-color:var(--vd)}
+.slide{display:none;padding:14px 12px 80px;animation:fi .22s ease}
+.slide.active{display:block}
+@keyframes fi{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+.hero{background:linear-gradient(135deg,var(--az) 60%,#1a4a9c);border-radius:var(--r);padding:20px 18px;margin-bottom:14px;position:relative;overflow:hidden}
+.hero::after{content:'';position:absolute;right:-30px;top:-30px;width:150px;height:150px;border-radius:50%;background:rgba(52,142,254,.18);pointer-events:none}
+.hero-badge{display:inline-block;background:var(--vd);color:var(--az);font-weight:800;font-size:9px;letter-spacing:.12em;text-transform:uppercase;padding:3px 10px;border-radius:20px;margin-bottom:10px}
+.hero h1{font-size:20px;font-weight:800;color:#fff;line-height:1.2;margin-bottom:5px;position:relative}
+.hero h1 em{color:var(--vd);font-style:normal}
+.hero p{font-size:11px;color:rgba(255,255,255,.65);line-height:1.55;position:relative}
+.sec{font-weight:700;font-size:10px;color:var(--az);text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px}
+.thdr{border-radius:var(--r);padding:16px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;position:relative;overflow:hidden}
+.thdr::after{content:'';position:absolute;right:-20px;top:-20px;width:110px;height:110px;border-radius:50%;background:rgba(255,255,255,.07);pointer-events:none}
+.thdr h2{font-size:20px;font-weight:800;color:#fff;margin-bottom:2px}
+.thdr p{font-size:11px;color:rgba(255,255,255,.7)}
+.thdr .tico svg{width:50px;height:50px;opacity:.85}
+.tpill{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700;margin-top:6px;background:rgba(124,255,68,.18);color:var(--vd)}
+.kgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.kbox{background:var(--card);border-radius:12px;padding:14px;border:1px solid var(--bdr);position:relative;overflow:hidden}
+.kbox::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--acc,var(--bl))}
+.kbox .klbl{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--mu);margin-bottom:5px;line-height:1.3}
+.kbox .kval{font-size:22px;font-weight:800;color:var(--acc,var(--bl));line-height:1;margin-bottom:3px}
+.kbox .ksub{font-size:9.5px;color:var(--mu);line-height:1.4}
+.up{color:var(--green)}.dn{color:var(--red)}.warn{color:var(--warn)}
+.ytd-box{background:var(--az);border-radius:12px;padding:14px 16px;margin-bottom:14px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.ytd-item{flex:1;min-width:120px}
+.ytd-lbl{font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.6);margin-bottom:3px}
+.ytd-val{font-size:20px;font-weight:800;color:#fff;line-height:1}
+.ytd-sub{font-size:10px;margin-top:2px}
+.ytd-div{width:1px;height:40px;background:rgba(255,255,255,.15);flex-shrink:0}
+.cc{background:var(--card);border-radius:var(--r);padding:12px;border:1px solid var(--bdr);margin-bottom:14px}
+.cnote{font-size:8.5px;color:var(--mu);margin-bottom:8px;letter-spacing:.04em;text-transform:uppercase}
+.ytgl{display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap}
+.ybtn{background:var(--g2);border:2px solid transparent;border-radius:8px;padding:3px 11px;font-size:10px;font-weight:700;cursor:pointer;transition:all .18s;font-family:var(--fn);color:var(--mu)}
+.ybtn.on25{background:rgba(52,142,254,.12);border-color:var(--bl);color:var(--bl)}
+.ybtn.on24{background:rgba(0,0,0,.08);border-color:#888;color:#444}
+.mxleg{display:flex;gap:12px;margin-bottom:7px;flex-wrap:wrap}
+.mxleg span{display:flex;align-items:center;gap:5px;font-size:10px}
+.ld{width:9px;height:9px;border-radius:2px;flex-shrink:0}
+.tc{background:var(--card);border-radius:var(--r);overflow:hidden;border:1px solid var(--bdr);margin-bottom:14px}
+.thead-row{display:flex;align-items:center;justify-content:space-between;padding:10px 13px 5px}
+.tscroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{width:100%;border-collapse:collapse;font-size:11px}
+thead th{background:var(--enc);color:#fff;font-weight:700;font-size:8.5px;letter-spacing:.07em;text-transform:uppercase;padding:8px 9px;text-align:right;white-space:nowrap}
+thead th:first-child{text-align:left}
+tbody td{padding:7px 9px;text-align:right;white-space:nowrap;border-bottom:1px solid rgba(0,0,0,.05);font-variant-numeric:tabular-nums}
+tbody td:first-child{text-align:left;font-weight:700}
+tbody tr:nth-child(odd) td{background:var(--g1)}
+tbody tr:nth-child(even) td{background:var(--g2)}
+tbody tr.prj td{color:#999;font-style:italic}
+tbody tr.tot td{background:var(--az);color:#fff;font-weight:700}
+.pbadge{display:inline-block;background:rgba(52,142,254,.15);color:var(--bl);font-size:7px;font-weight:700;padding:1px 4px;border-radius:3px;margin-left:3px}
+.ac{background:var(--card);border-radius:var(--r);padding:13px;border:1px solid var(--bdr);margin-bottom:14px}
+.ac ul{list-style:none;padding:0}
+.ac li{font-size:11px;line-height:1.65;color:#444;padding:5px 0;border-bottom:1px solid rgba(0,0,0,.05);display:flex;gap:8px;align-items:flex-start}
+.ac li:last-child{border-bottom:none}
+.dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.al{background:rgba(204,34,0,.06);border-left:4px solid var(--red);border-radius:10px;padding:10px 13px;margin-bottom:12px;font-size:11px;color:#5a0000;line-height:1.6}
+.inf{background:rgba(52,142,254,.06);border-left:4px solid var(--bl);border-radius:10px;padding:10px 13px;margin-bottom:12px;font-size:11px;color:#001640;line-height:1.6}
+.inf strong{color:var(--az)}
+.ok-box{background:rgba(0,165,80,.06);border-left:4px solid var(--green);border-radius:10px;padding:10px 13px;margin-bottom:12px;font-size:11px;color:#003320;line-height:1.6}
+.ok-box strong{color:var(--green)}
+.warn-box{background:rgba(217,119,6,.07);border-left:4px solid var(--warn);border-radius:10px;padding:10px 13px;margin-bottom:12px;font-size:11px;color:#5a3000;line-height:1.6}
+.warn-box strong{color:var(--warn)}
+.rkgrid{display:grid;grid-template-columns:1fr;gap:12px;margin-bottom:14px}
+.rkcard{background:var(--card);border-radius:var(--r);padding:13px;border:1px solid var(--bdr)}
+.srow{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid rgba(0,0,0,.06)}
+.srow:last-of-type{border-bottom:none}
+.sico{font-size:15px;width:20px;flex-shrink:0}
+.sinf{flex:1;min-width:0}
+.sname{font-size:12px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.snums{font-size:9px;color:var(--mu);margin-top:1px}
+.sbar{height:3px;background:rgba(0,0,0,.08);border-radius:2px;margin-top:3px}
+.sfill{height:3px;border-radius:2px}
+.spct{font-size:13px;font-weight:800;flex-shrink:0}
+.twocol{display:grid;grid-template-columns:1fr;gap:14px}
+.ppto-terr-grid{display:grid;grid-template-columns:1fr;gap:10px}
+#toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--az);color:#fff;padding:9px 16px;border-radius:10px;font-size:11px;font-weight:700;z-index:9999;opacity:0;transition:opacity .28s;pointer-events:none;white-space:nowrap;max-width:calc(100vw - 24px);text-align:center}
+#toast.show{opacity:1}
+.hc-foco-grid{display:grid;grid-template-columns:1fr;gap:8px;margin-bottom:14px}
+.hc-tipo-block{background:var(--card);border-radius:12px;padding:13px;border:1px solid var(--bdr)}
+.hc-tipo-title{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.hc-tipo-badge{font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 10px;border-radius:20px;flex-shrink:0}
+.badge-contratado{background:rgba(0,42,108,.12);color:var(--az)}
+.badge-postulante{background:rgba(52,142,254,.12);color:var(--bl)}
+.badge-psicologica{background:rgba(58,140,26,.12);color:var(--gr)}
+.hc-row{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(0,0,0,.05)}
+.hc-row:last-child{border-bottom:none}
+.hc-terr{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;width:44px;flex-shrink:0;color:var(--mu)}
+.hc-sede{font-size:11px;font-weight:700;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hc-bar-wrap{width:80px;height:5px;background:rgba(0,0,0,.08);border-radius:3px;flex-shrink:0}
+.hc-bar-fill{height:5px;border-radius:3px}
+.hc-val{font-size:13px;font-weight:800;width:36px;text-align:right;flex-shrink:0}
+.hc-ok{color:var(--green)}.hc-warn{color:var(--warn)}.hc-red{color:var(--red)}
+.cap-kgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px}
+@media(min-width:600px){.cap-kgrid{grid-template-columns:repeat(4,1fr)}}
+.tcard{background:var(--card);border-radius:12px;padding:12px 14px;border:1px solid var(--bdr)}
+.tcard-title{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px}
+.tcard-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;font-size:10px}
+.tcard-row .lbl{color:var(--mu)}.tcard-row .val{font-weight:700}
+.obar{height:4px;background:rgba(0,0,0,.08);border-radius:2px;margin-top:2px;margin-bottom:5px;overflow:hidden}
+.ofill{height:4px;border-radius:2px}
+.exec-card{background:var(--az);border-radius:var(--r);padding:18px 20px;color:#fff;margin-bottom:14px;line-height:1.75;font-size:11.5px}
+.exec-card h3{font-size:13px;font-weight:800;color:var(--vd);margin-bottom:10px;letter-spacing:.04em}
+.exec-card p{color:rgba(255,255,255,.82);margin-bottom:5px}
+.exec-card strong{color:#fff}
+.q-grid{display:grid;grid-template-columns:1fr;gap:10px;margin-bottom:14px}
+@media(min-width:700px){.q-grid{grid-template-columns:1fr 1fr}}
+.qcard{background:var(--card);border-radius:var(--r);padding:14px;border:1px solid var(--bdr)}
+.qcard-title{font-size:9px;font-weight:800;color:var(--az);text-transform:uppercase;letter-spacing:.08em;margin-bottom:7px}
+.qcard p{font-size:11px;color:#374151;line-height:1.72}
+.qcard p strong{color:var(--tx)}
+@media(min-width:480px){.slide{padding:18px 16px 80px}.kgrid{grid-template-columns:repeat(2,1fr)}}
+@media(min-width:700px){
+  .slide{padding:26px 26px 80px}.kgrid{grid-template-columns:repeat(4,1fr)}
+  .rkgrid{grid-template-columns:1fr 1fr}.hero h1{font-size:26px}
+  table{font-size:12px}thead th{font-size:10px;padding:9px 11px}tbody td{padding:8px 11px}
+  .twocol{grid-template-columns:1fr 1fr}
+  .ppto-terr-grid{grid-template-columns:1fr 1fr 1fr}
+  .hc-foco-grid{grid-template-columns:1fr 1fr 1fr}
+}
+@media(min-width:960px){.slide{padding:34px 40px 80px}}
+  </style>
+</head>
+<body>
+<div id="toast"></div>
+
+<nav class="nav">
+  <div class="nav-brand">▐ SEL</div>
+  <div class="nav-tabs">
+    <button class="tbtn active" onclick="showTab(0)">🏠 General</button>
+    <button class="tbtn"        onclick="showTab(1)">⛰️ Norte</button>
+    <button class="tbtn"        onclick="showTab(2)">🏙️ Metro</button>
+    <button class="tbtn"        onclick="showTab(3)">🌲 Sur</button>
+    <button class="tbtn"        onclick="showTab(4)">🕐 Horizonte</button>
+    <button class="tbtn"        onclick="showTab(5)">💰 Presupuesto</button>
+    <button class="tbtn"        onclick="showTab(6)">📈 Proyección</button>
+    <button class="tbtn"        onclick="showTab(7)">🏥 Capacidad</button>
+  </div>
+</nav>
+
+
+<!-- ═══ TAB 0 — GENERAL ══════════════════════════════════════════ -->
+<div class="slide active" id="tab-0">
+  <div class="hero">
+    <div class="hero-badge">SEL ACHS · S3–S8 · 2026 vs 2025</div>
+    <h1>Productividad<br><em>por Territorio</em></h1>
+    <p>61 centros · 3 territorios · Análisis comparativo S3–S8 · Semana de corte: S8 (28 feb 2026)</p>
+  </div>
+
+  <p class="sec">Indicadores clave · S3–S8 · 2026</p>
+  <div class="kgrid">
+    <div class="kbox" style="--acc:#002A6C">
+      <p class="klbl">Total S3–S8 · 2026</p>
+      <p class="kval">64.048</p>
+      <p class="ksub"><span class="up">▲+11.2%</span> vs 2025 (57.594)</p>
+    </div>
+    <div class="kbox" style="--acc:#00A550">
+      <p class="klbl">Producción S8 — total</p>
+      <p class="kval">10.584</p>
+      <p class="ksub"><span class="up">▲+13.5%</span> vs S8 2025 (9.334)</p>
+    </div>
+    <div class="kbox" style="--acc:#348EFE">
+      <p class="klbl">YTD S1–S8 global</p>
+      <p class="kval">80.873</p>
+      <p class="ksub"><span class="up">▲+10.2%</span> vs 2025 (73.430)</p>
+    </div>
+    <div class="kbox" style="--acc:#d97706">
+      <p class="klbl">Horizonte cita foco S8</p>
+      <p class="kval">16 focos</p>
+      <p class="ksub"><span class="warn">Sur concentra 8 centros ≥2d</span></p>
+    </div>
+  </div>
+
+  <p class="sec">Producción acumulada año (S1–S8) · 2026 vs 2025</p>
+  <div class="ytd-box">
+    <div class="ytd-item">
+      <div class="ytd-lbl">Norte · YTD</div>
+      <div class="ytd-val">27.386</div>
+      <div class="ytd-sub"><span class="up">▲+11.1%</span> <span style="color:rgba(255,255,255,.45);font-size:9px">vs 2025 (24.656)</span></div>
+    </div>
+    <div class="ytd-div"></div>
+    <div class="ytd-item">
+      <div class="ytd-lbl">Metro · YTD</div>
+      <div class="ytd-val">32.568</div>
+      <div class="ytd-sub"><span class="up">▲+9.5%</span> <span style="color:rgba(255,255,255,.45);font-size:9px">vs 2025 (29.738)</span></div>
+    </div>
+    <div class="ytd-div"></div>
+    <div class="ytd-item">
+      <div class="ytd-lbl">Sur · YTD</div>
+      <div class="ytd-val">20.919</div>
+      <div class="ytd-sub"><span class="up">▲+9.9%</span> <span style="color:rgba(255,255,255,.45);font-size:9px">vs 2025 (19.036)</span></div>
+    </div>
+    <div class="ytd-div"></div>
+    <div class="ytd-item">
+      <div class="ytd-lbl">Total YTD S1–S8</div>
+      <div class="ytd-val">80.873</div>
+      <div class="ytd-sub"><span class="up">▲+10.2%</span> <span style="color:rgba(255,255,255,.45);font-size:9px">vs 2025 (73.430)</span></div>
+    </div>
+  </div>
+
+  <div class="ok-box">
+    <strong>✅ YTD S1–S8 positivo en los 3 territorios:</strong> Norte lidera con +11.1%. S8 2026 marca el mejor cierre del período con 10.584 prestaciones totales (+13.5% vs S8 2025). El momentum es sostenido en los 3 territorios.
+  </div>
+
+  <div class="cc">
+    <p class="sec">Evolución S3–S8 · 2026 — los 3 territorios</p>
+    <p class="cnote">Prestaciones reales · etiquetas 2026</p>
+    <canvas id="chartGeneral"></canvas>
+  </div>
+
+  <div class="ac">
+    <p class="sec">Resumen territorial S3–S8</p>
+    <ul>
+      <li><span class="dot" style="background:#002A6C"></span><strong>Norte +10.7%:</strong> 21.700 prest. S8 récord histórico (3.862). Copiapó y Vallenar lideran el crecimiento.</li>
+      <li><span class="dot" style="background:#348EFE"></span><strong>Metro +11.7%:</strong> 25.988 prest. Los Andes sigue como motor de crecimiento. S4 pico del período (4.494).</li>
+      <li><span class="dot" style="background:#3a8c1a"></span><strong>Sur +11.1%:</strong> 16.360 prest. Arauco y Osorno con alzas fuertes. Castro y Coyhaique persisten con caídas.</li>
+    </ul>
+  </div>
+
+  <div class="tc">
+    <div class="thead-row"><p class="sec" style="margin-bottom:0">Tabla comparativa S3–S8 · 2026 vs 2025</p></div>
+    <div class="tscroll">
+      <table>
+        <thead><tr><th>Sem</th><th>N·25</th><th>N·26</th><th>Δ%</th><th>M·25</th><th>M·26</th><th>Δ%</th><th>S·25</th><th>S·26</th><th>Δ%</th><th>Tot·26</th></tr></thead>
+        <tbody>
+          <tr><td>S3</td><td>3.681</td><td>3.701</td><td class="up">+0.6%</td><td>4.149</td><td>4.573</td><td class="up">+10.2%</td><td>2.565</td><td>2.813</td><td class="up">+9.7%</td><td><b>11.087</b></td></tr>
+          <tr><td>S4</td><td>3.330</td><td>3.648</td><td class="up">+9.5%</td><td>4.003</td><td>4.494</td><td class="up">+12.3%</td><td>2.526</td><td>2.744</td><td class="up">+8.6%</td><td><b>10.886</b></td></tr>
+          <tr><td>S5</td><td>3.277</td><td>3.550</td><td class="up">+8.3%</td><td>3.867</td><td>4.423</td><td class="up">+14.4%</td><td>2.386</td><td>2.765</td><td class="up">+15.9%</td><td><b>10.738</b></td></tr>
+          <tr><td>S6</td><td>3.150</td><td>3.396</td><td class="up">+7.8%</td><td>3.707</td><td>4.204</td><td class="up">+13.4%</td><td>2.434</td><td>2.535</td><td class="up">+4.2%</td><td><b>10.135</b></td></tr>
+          <tr><td>S7</td><td>3.179</td><td>3.543</td><td class="up">+11.5%</td><td>3.845</td><td>4.276</td><td class="up">+11.2%</td><td>2.462</td><td>2.799</td><td class="up">+13.7%</td><td><b>10.618</b></td></tr>
+          <tr><td>S8</td><td>2.980</td><td>3.862</td><td class="up">+29.6%</td><td>3.701</td><td>4.019</td><td class="up">+8.6%</td><td>2.353</td><td>2.704</td><td class="up">+14.9%</td><td><b>10.585</b></td></tr>
+          <tr class="tot"><td>Total</td><td>19.597</td><td>21.700</td><td>▲+10.7%</td><td>23.272</td><td>25.989</td><td>▲+11.7%</td><td>14.726</td><td>16.360</td><td>▲+11.1%</td><td><b>64.049</b></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div><!-- /tab-0 -->
+
+
+<!-- ═══ TAB 1 — NORTE ════════════════════════════════════════════ -->
+<div class="slide" id="tab-1">
+  <div class="thdr" style="background:linear-gradient(135deg,#002A6C,#1a5cbb)">
+    <div>
+      <h2>Norte</h2>
+      <p>12 centros · S3–S8 2026</p>
+      <span class="tpill">▲+10.7% vs 2025</span>
+    </div>
+    <div class="tico">
+      <svg viewBox="0 0 64 64" fill="none"><polygon points="32,4 58,54 6,54" fill="#7CFF44" opacity=".9"/><polygon points="32,18 52,54 12,54" fill="#1a5cbb" opacity=".6"/><circle cx="32" cy="8" r="4" fill="white" opacity=".7"/></svg>
+    </div>
+  </div>
+
+  <div class="kgrid">
+    <div class="kbox" style="--acc:#002A6C"><p class="klbl">Total S3–S8 · 2026</p><p class="kval">21.700</p><p class="ksub"><span class="up">▲+10.7%</span> vs 2025 (19.597)</p></div>
+    <div class="kbox" style="--acc:#7CFF44"><p class="klbl">S8 · récord período</p><p class="kval" style="color:#002A6C">3.862</p><p class="ksub"><span class="up">▲+29.6%</span> vs S8 2025 (2.980)</p></div>
+    <div class="kbox" style="--acc:#00A550"><p class="klbl">% Cobro cliente S8</p><p class="kval">76.3%</p><p class="ksub">916 agencia · 2.946 cliente</p></div>
+    <div class="kbox" style="--acc:#cc2200"><p class="klbl">S6 mínimo estacional</p><p class="kval">3.396</p><p class="ksub">Patrón 3er año consecutivo</p></div>
+  </div>
+
+  <div class="twocol">
+  <div class="cc">
+    <p class="sec">Producción semanal · Norte · S3–S8</p>
+    <div class="ytgl" id="tg-norte">
+      <button class="ybtn on25" data-ch="norte" data-yr="2025" onclick="toggleYr(this)">+ 2025</button>
+      <button class="ybtn" data-ch="norte" data-yr="2024" onclick="toggleYr(this)">+ 2024</button>
+    </div>
+    <p class="cnote">2026 sólido con etiquetas · año comparativo punteado sin fill</p>
+    <canvas id="chartNorte"></canvas>
+  </div>
+
+  <div class="cc">
+    <p class="sec">Mix cobro semanal · Norte · S3–S8 · 2026</p>
+    <div class="mxleg">
+      <span><span class="ld" style="background:#002A6C"></span>Cobro Agencia (Ley 16744)</span>
+      <span><span class="ld" style="background:#348EFE"></span>Cobro Cliente</span>
+    </div>
+    <p class="cnote">Norte alcanza 76.3% cobro cliente en S8 — máximo del período</p>
+    <canvas id="chartMixNorte"></canvas>
+  </div>
+  </div>
+
+  <div class="ac">
+    <p class="sec">Tendencia Norte S3–S8</p>
+    <ul>
+      <li><span class="dot" style="background:#002A6C"></span><strong>S8 récord:</strong> 3.862 prest. es el máximo del período en Norte. Rompe patrón histórico donde S8 solía ser débil.</li>
+      <li><span class="dot" style="background:#7CFF44"></span><strong>S6 mínimo estacional:</strong> 3er año consecutivo, pero 2026 lo contiene mejor que 2025 (-7.5% vs pico vs -16.3% en 2025).</li>
+      <li><span class="dot" style="background:#00A550"></span><strong>Cobro cliente en alza:</strong> Desde 73.6% en S3 hasta 76.3% en S8. Mejor ratio del período.</li>
+    </ul>
+  </div>
+
+  <p class="sec">Top & Bottom · centros Norte vs 2025 (S3–S8)</p>
+  <div class="rkgrid">
+    <div class="rkcard">
+      <p class="sec" style="color:var(--green)">▲ Mayor crecimiento</p>
+      <div class="srow"><div class="sico">🥇</div><div class="sinf"><div class="sname">Copiapó</div><div class="snums">2025: 1.951 → 2026: 2.565 · Δ+614</div><div class="sbar"><div class="sfill" style="width:32%;background:var(--green)"></div></div></div><div class="spct up">+31.5%</div></div>
+      <div class="srow"><div class="sico">🥈</div><div class="sinf"><div class="sname">Vallenar</div><div class="snums">2025: 771 → 2026: 902 · Δ+131</div><div class="sbar"><div class="sfill" style="width:17%;background:var(--green)"></div></div></div><div class="spct up">+17.1%</div></div>
+    </div>
+    <div class="rkcard">
+      <p class="sec" style="color:var(--red)">▼ Mayor caída</p>
+      <div class="srow"><div class="sico">⚠️</div><div class="sinf"><div class="sname">Arica</div><div class="snums">2025: 1.489 → 2026: 1.357 · Δ-132</div><div class="sbar"><div class="sfill" style="width:9%;background:var(--red)"></div></div></div><div class="spct dn">-8.9%</div></div>
+      <div class="srow"><div class="sico">📊</div><div class="sinf"><div class="sname">Ovalle</div><div class="snums">2025: 726 → 2026: 728 · empate técnico</div><div class="sbar"><div class="sfill" style="width:1%;background:var(--mu)"></div></div></div><div class="spct" style="color:var(--mu)">+0.3%</div></div>
+      <p style="font-size:9px;color:var(--mu);margin-top:8px">Prom. Norte: <b style="color:#002A6C">▲+8.4%</b> · 12 centros</p>
+    </div>
+  </div>
+
+  <div class="cc">
+    <p class="sec">Top & Bottom · Δ absoluto 2025 → 2026 · Norte</p>
+    <p class="cnote">Centros ordenados por variación absoluta · barra verde = crecimiento · roja = caída</p>
+    <canvas id="chartRkNorte" style="max-height:280px"></canvas>
+  </div>
+</div><!-- /tab-1 -->
+
+
+<!-- ═══ TAB 2 — METRO ════════════════════════════════════════════ -->
+<div class="slide" id="tab-2">
+  <div class="thdr" style="background:linear-gradient(135deg,#005a28,#1a7a48)">
+    <div>
+      <h2>Metro</h2>
+      <p>13 centros · Mayor volumen y crecimiento</p>
+      <span class="tpill">▲+11.7% vs 2025</span>
+    </div>
+    <div class="tico">
+      <svg viewBox="0 0 64 64" fill="none"><rect x="4" y="28" width="11" height="28" rx="1" fill="#7CFF44" opacity=".85"/><rect x="17" y="16" width="14" height="40" rx="1" fill="white" opacity=".9"/><rect x="33" y="22" width="12" height="34" rx="1" fill="#7CFF44" opacity=".7"/><rect x="47" y="32" width="13" height="24" rx="1" fill="white" opacity=".75"/><line x1="24" y1="16" x2="24" y2="10" stroke="white" stroke-width="2"/><circle cx="24" cy="9" r="2.5" fill="#7CFF44"/></svg>
+    </div>
+  </div>
+
+  <div class="inf"><strong>💡 Los Andes continúa liderando:</strong> Sigue como el motor de crecimiento de Metro. Hosp. del Trabajador crece modestamente pero mantiene su peso como mayor centro del período.</div>
+
+  <div class="kgrid">
+    <div class="kbox" style="--acc:#005a28"><p class="klbl">Total S3–S8 · 2026</p><p class="kval">25.988</p><p class="ksub"><span class="up">▲+11.7%</span> vs 2025 (23.272)</p></div>
+    <div class="kbox" style="--acc:#348EFE"><p class="klbl">S4 · pico del período</p><p class="kval">4.494</p><p class="ksub"><span class="up">▲+12.3%</span> vs S4 2025 (4.003)</p></div>
+    <div class="kbox" style="--acc:#00A550"><p class="klbl">% Cobro cliente S8</p><p class="kval">69.5%</p><p class="ksub">1.226 agencia · 2.793 cliente</p></div>
+    <div class="kbox" style="--acc:#cc2200"><p class="klbl">La Calera · alerta</p><p class="kval">-2.3%</p><p class="ksub">2do período consecutivo en rojo</p></div>
+  </div>
+
+  <div class="twocol">
+  <div class="cc">
+    <p class="sec">Producción semanal · Metro · S3–S8</p>
+    <div class="ytgl" id="tg-metro">
+      <button class="ybtn on25" data-ch="metro" data-yr="2025" onclick="toggleYr(this)">+ 2025</button>
+      <button class="ybtn" data-ch="metro" data-yr="2024" onclick="toggleYr(this)">+ 2024</button>
+    </div>
+    <p class="cnote">2026 sólido con etiquetas · año comparativo punteado sin fill</p>
+    <canvas id="chartMetro"></canvas>
+  </div>
+
+  <div class="cc">
+    <p class="sec">Mix cobro semanal · Metro · S3–S8 · 2026</p>
+    <div class="mxleg">
+      <span><span class="ld" style="background:#002A6C"></span>Cobro Agencia (Ley 16744)</span>
+      <span><span class="ld" style="background:#348EFE"></span>Cobro Cliente</span>
+    </div>
+    <p class="cnote">Metro consolida ~67–69% cobro cliente — mejor ratio de ingresos del período</p>
+    <canvas id="chartMixMetro"></canvas>
+  </div>
+  </div>
+
+  <div class="ac">
+    <p class="sec">Tendencia Metro S3–S8</p>
+    <ul>
+      <li><span class="dot" style="background:#005a28"></span><strong>S4 pico histórico (4.494):</strong> Semana más alta del período Metro. S8 modera levemente pero sobre todo 2025.</li>
+      <li><span class="dot" style="background:#348EFE"></span><strong>Cobro cliente estable en 67–69%:</strong> Consolida el mejor mix de ingresos entre los 3 territorios.</li>
+      <li><span class="dot" style="background:#cc2200"></span><strong>La Calera: 2do período negativo:</strong> Único centro Metro con caída. Requiere revisión de agenda y derivaciones.</li>
+    </ul>
+  </div>
+
+  <p class="sec">Top & Bottom · centros Metro vs 2025 (S3–S8)</p>
+  <div class="rkgrid">
+    <div class="rkcard">
+      <p class="sec" style="color:var(--green)">▲ Mayor crecimiento</p>
+      <div class="srow"><div class="sico">🥇</div><div class="sinf"><div class="sname">Los Andes</div><div class="snums">2025: 1.191 → 2026: 2.375 · Δ+1.184</div><div class="sbar"><div class="sfill" style="width:99%;background:var(--green)"></div></div></div><div class="spct up">+99.4%</div></div>
+      <div class="srow"><div class="sico">🥈</div><div class="sinf"><div class="sname">Las Condes</div><div class="snums">2025: 1.462 → 2026: 1.993 · Δ+531</div><div class="sbar"><div class="sfill" style="width:36%;background:var(--green)"></div></div></div><div class="spct up">+36.3%</div></div>
+    </div>
+    <div class="rkcard">
+      <p class="sec" style="color:var(--red)">▼ Mayor caída / rezago</p>
+      <div class="srow"><div class="sico">⚠️</div><div class="sinf"><div class="sname">La Calera</div><div class="snums">2025: 763 → 2026: 746 · Δ-17</div><div class="sbar"><div class="sfill" style="width:2%;background:var(--red)"></div></div></div><div class="spct dn">-2.3%</div></div>
+      <div class="srow"><div class="sico">📊</div><div class="sinf"><div class="sname">Hosp. Trabajador</div><div class="snums">2025: 6.890 → 2026: 7.010 · Δ+120</div><div class="sbar"><div class="sfill" style="width:2%;background:var(--mu)"></div></div></div><div class="spct" style="color:var(--mu)">+1.7%</div></div>
+      <p style="font-size:9px;color:var(--mu);margin-top:8px">Prom. Metro: <b style="color:#005a28">▲+18.4%</b> · 13 centros</p>
+    </div>
+  </div>
+
+  <div class="cc">
+    <p class="sec">Top & Bottom · Δ absoluto 2025 → 2026 · Metro</p>
+    <p class="cnote">Centros ordenados por variación absoluta · barra verde = crecimiento · roja = caída</p>
+    <canvas id="chartRkMetro" style="max-height:280px"></canvas>
+  </div>
+</div><!-- /tab-2 -->
+
+
+<!-- ═══ TAB 3 — SUR ═════════════════════════════════════════════ -->
+<div class="slide" id="tab-3">
+  <div class="thdr" style="background:linear-gradient(135deg,#3a3a3a,#606060)">
+    <div>
+      <h2>Sur</h2>
+      <p>13 centros · Mayor cobertura geográfica</p>
+      <span class="tpill">▲+11.1% vs 2025</span>
+    </div>
+    <div class="tico">
+      <svg viewBox="0 0 64 64" fill="none"><rect x="28" y="44" width="8" height="14" rx="2" fill="#7CFF44" opacity=".6"/><polygon points="32,4 52,30 12,30" fill="#7CFF44" opacity=".95"/><polygon points="32,14 50,36 14,36" fill="#7CFF44" opacity=".78"/><polygon points="32,24 48,44 16,44" fill="#7CFF44" opacity=".62"/></svg>
+    </div>
+  </div>
+
+  <div class="warn-box"><strong>⚠️ Sur concentra el mayor foco de Horizonte de Cita:</strong> 7 centros Sur con ≥2 días en S8 (Temuco, Talca, Linares, Chillán). Revisar pestaña <strong>Horizonte</strong> para detalle.</div>
+
+  <div class="kgrid">
+    <div class="kbox" style="--acc:#3a3a3a"><p class="klbl">Total S3–S8 · 2026</p><p class="kval">16.360</p><p class="ksub"><span class="up">▲+11.1%</span> vs 2025 (14.726)</p></div>
+    <div class="kbox" style="--acc:#7CFF44"><p class="klbl">Arauco · sorpresa</p><p class="kval" style="color:#3a3a3a">+66.5%</p><p class="ksub">164 → 273 prest. en crecimiento</p></div>
+    <div class="kbox" style="--acc:#cc2200"><p class="klbl">Castro · monitorear</p><p class="kval">-21.1%</p><p class="ksub">484 → 382 prest. 2do período rojo</p></div>
+    <div class="kbox" style="--acc:#348EFE"><p class="klbl">S8 · 2026</p><p class="kval">2.704</p><p class="ksub"><span class="up">▲+14.9%</span> vs S8 2025 (2.353)</p></div>
+  </div>
+
+  <div class="twocol">
+  <div class="cc">
+    <p class="sec">Producción semanal · Sur · S3–S8</p>
+    <div class="ytgl" id="tg-sur">
+      <button class="ybtn on25" data-ch="sur" data-yr="2025" onclick="toggleYr(this)">+ 2025</button>
+      <button class="ybtn" data-ch="sur" data-yr="2024" onclick="toggleYr(this)">+ 2024</button>
+    </div>
+    <p class="cnote">2026 sólido con etiquetas · año comparativo punteado sin fill</p>
+    <canvas id="chartSur"></canvas>
+  </div>
+
+  <div class="cc">
+    <p class="sec">Mix cobro semanal · Sur · S3–S8 · 2026</p>
+    <div class="mxleg">
+      <span><span class="ld" style="background:#002A6C"></span>Cobro Agencia (Ley 16744)</span>
+      <span><span class="ld" style="background:#348EFE"></span>Cobro Cliente</span>
+    </div>
+    <p class="cnote">Sur: S5 alcanza 70.0% cobro cliente — máximo del período</p>
+    <canvas id="chartMixSur"></canvas>
+  </div>
+  </div>
+
+  <div class="ac">
+    <p class="sec">Tendencia Sur S3–S8</p>
+    <ul>
+      <li><span class="dot" style="background:#3a3a3a"></span><strong>Crecimiento en todas las semanas:</strong> +4.2% a +15.9%. S5 es la semana de mayor alza relativa.</li>
+      <li><span class="dot" style="background:#cc2200"></span><strong>S6 estacional 3er año:</strong> Caída contenida en 2026 (-8.3% vs pico) mejor que 2025 (-14.2%).</li>
+      <li><span class="dot" style="background:#d97706"></span><strong>Castro y Coyhaique persisten:</strong> -21.1% y -19.7%. Geografía aislada con menor demanda orgánica.</li>
+    </ul>
+  </div>
+
+  <p class="sec">Top & Bottom · centros Sur vs 2025 (S3–S8)</p>
+  <div class="rkgrid">
+    <div class="rkcard">
+      <p class="sec" style="color:var(--green)">▲ Mayor crecimiento</p>
+      <div class="srow"><div class="sico">🥇</div><div class="sinf"><div class="sname">Arauco</div><div class="snums">2025: 164 → 2026: 273 · Δ+109</div><div class="sbar"><div class="sfill" style="width:67%;background:var(--green)"></div></div></div><div class="spct up">+66.5%</div></div>
+      <div class="srow"><div class="sico">🥈</div><div class="sinf"><div class="sname">Osorno</div><div class="snums">2025: 536 → 2026: 707 · Δ+171</div><div class="sbar"><div class="sfill" style="width:32%;background:var(--green)"></div></div></div><div class="spct up">+31.9%</div></div>
+    </div>
+    <div class="rkcard">
+      <p class="sec" style="color:var(--red)">▼ Mayor caída</p>
+      <div class="srow"><div class="sico">⚠️</div><div class="sinf"><div class="sname">Castro</div><div class="snums">2025: 484 → 2026: 382 · Δ-102</div><div class="sbar"><div class="sfill" style="width:21%;background:var(--red)"></div></div></div><div class="spct dn">-21.1%</div></div>
+      <div class="srow"><div class="sico">⚠️</div><div class="sinf"><div class="sname">Coyhaique</div><div class="snums">2025: 233 → 2026: 187 · Δ-46</div><div class="sbar"><div class="sfill" style="width:20%;background:var(--red)"></div></div></div><div class="spct dn">-19.7%</div></div>
+      <p style="font-size:9px;color:var(--mu);margin-top:8px">Prom. Sur: <b style="color:#3a3a3a">▲+12.5%</b> · 13 centros</p>
+    </div>
+  </div>
+
+  <div class="cc">
+    <p class="sec">Top & Bottom · Δ absoluto 2025 → 2026 · Sur</p>
+    <p class="cnote">Centros ordenados por variación absoluta · barra verde = crecimiento · roja = caída</p>
+    <canvas id="chartRkSur" style="max-height:280px"></canvas>
+  </div>
+</div><!-- /tab-3 -->
+
+
+<!-- ═══ TAB 4 — HORIZONTE ════════════════════════════════════════ -->
+<div class="slide" id="tab-4">
+  <div class="hero">
+    <div class="hero-badge">Horizonte de Cita · S8 2026 · Foco ≥ 2 días</div>
+    <h1>Horizonte<br><em>de Cita</em></h1>
+    <p>Centros con ≥ 2 días de espera en S8 · Tipos: Contratado · Postulante · Psicológica</p>
+  </div>
+
+  <div class="warn-box">
+    <strong>🎯 Misión de margen sano:</strong> El umbral de acción es <strong>≥ 2 días</strong>. Palancas disponibles: apertura de sobrecupos, refuerzo de agenda o redistribución de derivaciones.
+  </div>
+
+  <p class="sec">Detalle por tipo de cita · S8 2026</p>
+  <div class="hc-foco-grid">
+    <div class="hc-tipo-block">
+      <div class="hc-tipo-title"><span class="hc-tipo-badge badge-contratado">Contratado</span><span style="font-size:9px;color:var(--mu)">4 centros fuera de margen</span></div>
+      <div class="hc-row"><div class="hc-terr">SUR</div><div class="hc-sede">Temuco</div><div class="hc-bar-wrap"><div class="hc-bar-fill" style="width:84%;background:var(--red)"></div></div><div class="hc-val hc-red">4.2d</div></div>
+      <div class="hc-row"><div class="hc-terr">SUR</div><div class="hc-sede">Talca</div><div class="hc-bar-wrap"><div class="hc-bar-fill" style="width:76%;background:var(--warn)"></div></div><div class="hc-val hc-warn">3.8d</div></div>
+      <div class="hc-row"><div class="hc-terr">SUR</div><div class="hc-sede">Linares</div><div class="hc-bar-wrap"><div class="hc-bar-fill" style="width:44%;background:var(--warn)"></div></div><div class="hc-val hc-warn">2.2d</div></div>
+      <div class="hc-row"><div class="hc-terr">NTE</div><div class="hc-sede">Illapel</div><div class="hc-bar-wrap"><div class="hc-bar-fill" style="width:40%;background:var(--warn)"></div></div><div class="hc-val hc-warn">2.0d</div></div>
+    </div>
+    <div class="hc-tipo-block">
+      <div class="hc-tipo-title"><span class="hc-tipo-badge badge-postulante">Postulante</span><span style="font-size:9px;color:var(--mu)">5 centros fuera de margen</span></div>
+      <div class="hc-row"><div class="hc-terr">SUR</div><div class="hc-sede">Talca</div><div class="hc-bar-wrap"><div class="hc-bar-fill" style="width:60%;background:var(--warn)"></div></div><div class="hc-val hc-warn">3.0d</div></div>
+      <div class="hc-row"><div class="hc-terr">SUR</div><div class="hc-sede">Linares</div><div class="hc-bar-wrap"><div class="hc-bar-fill" style="width:56%;background:var(--warn)"></div></div><div class="hc-val hc-warn">2.8d</div></div>
+      <div class="hc-row"><div class="hc-terr">NTE</div><div class="hc-sede">Illapel</div><div class="hc-bar-wrap"><div class="hc-bar-fill" style="width:48%;background:var(--warn)"></div></div><div class="hc-val hc-warn">2.4d</div></div>
+      <div class="hc-row"><div class="hc-terr">SUR</div><div class="hc-sede">Chillán</div><div class="hc-bar-wrap"><div class="hc-bar-fill" style="width:40%;background:var(--warn)"></div></div><div class="hc-val hc-warn">2.0d</div></div>
+      <div class="hc-row"><div class="hc-terr">NTE</div><div class="hc-sede">Coquimbo</div><div class="hc-bar-wrap"><div class="hc-bar-fill" style="width:40%;background:var(--warn)"></div></div><div class="hc-val hc-warn">2.0d</div></div>
+    </div>
+    <div class="hc-tipo-block">
+      <div class="hc-tipo-title"><span class="hc-tipo-badge badge-psicologica">Psicológica</span><span style="font-size:9px;color:var(--mu)">5 centros fuera de margen</span></div>
+      <div class="hc-row"><div class="hc-terr">MTR</div><div class="hc-sede">Rancagua</div><div class="hc-bar-wrap"><div class="hc-bar-fill" style="width:52%;background:var(--warn)"></div></div><div class="hc-val hc-warn">2.6d</div></div>
+      <div class="hc-row"><div class="hc-terr">NTE</div><div class="hc-sede">Antofagasta</div><div class="hc-bar-wrap"><div class="hc-bar-fill" style="width:44%;background:var(--warn)"></div></div><div class="hc-val hc-warn">2.2d</div></div>
+      <div class="hc-row"><div class="hc-terr">MTR</div><div class="hc-sede">Viña del Mar</div><div class="hc-bar-wrap"><div class="hc-bar-fill" style="width:40%;background:var(--warn)"></div></div><div class="hc-val hc-warn">2.0d</div></div>
+      <div class="hc-row"><div class="hc-terr">NTE</div><div class="hc-sede">Copiapó</div><div class="hc-bar-wrap"><div class="hc-bar-fill" style="width:40%;background:var(--warn)"></div></div><div class="hc-val hc-warn">2.0d</div></div>
+      <div class="hc-row"><div class="hc-terr">NTE</div><div class="hc-sede">Illapel</div><div class="hc-bar-wrap"><div class="hc-bar-fill" style="width:40%;background:var(--warn)"></div></div><div class="hc-val hc-warn">2.0d</div></div>
+    </div>
+  </div>
+
+  <p class="sec">Tendencia promedio territorial S3–S8 · 2026</p>
+  <div class="twocol">
+    <div class="cc">
+      <p class="sec">Horizonte promedio · Norte</p>
+      <p class="cnote">Días de espera promedio por tipo · S3–S8 · 2026</p>
+      <canvas id="chartHCNorte"></canvas>
+    </div>
+    <div class="cc">
+      <p class="sec">Horizonte promedio · Sur</p>
+      <p class="cnote">Días de espera promedio por tipo · S3–S8 · 2026</p>
+      <canvas id="chartHCSur"></canvas>
+    </div>
+  </div>
+
+  <div class="ac">
+    <p class="sec">Lectura y plan de acción recomendado</p>
+    <ul>
+      <li><span class="dot" style="background:var(--red)"></span><strong>Puerto Natales — excluido análisis:</strong> Agenda bloqueada por laboratorio S8. Monitorear S9 para evaluar reactivación.</li>
+      <li><span class="dot" style="background:var(--red)"></span><strong>Prioridad 1 — Temuco:</strong> Contratado 4.2d. Centro de alto volumen Sur. Evaluar redistribución a Angol o Chillán.</li>
+      <li><span class="dot" style="background:var(--warn)"></span><strong>Prioridad 2 — Talca y Linares:</strong> Ambas en 2 tipos. Talca (Cont. 3.8d, Post. 3.0d). Linares (Cont. 2.2d, Post. 2.8d). Sobrecupos recomendados.</li>
+      <li><span class="dot" style="background:var(--warn)"></span><strong>Prioridad 2 — Illapel:</strong> Único centro Norte en 3 tipos simultáneamente. Analizar tele-consulta o refuerzo itinerante.</li>
+      <li><span class="dot" style="background:var(--az)"></span><strong>Metro controlado:</strong> Solo Rancagua (Psic. 2.6d) y Viña del Mar (Psic. 2.0d). Contratado y Postulante en margen sano.</li>
+    </ul>
+  </div>
+</div><!-- /tab-4 -->
+
+
+<!-- ═══ TAB 5 — PRESUPUESTO ══════════════════════════════════════ -->
+<div class="slide" id="tab-5">
+  <div class="hero">
+    <div class="hero-badge">Presupuesto 2026 · Avance Ene–Feb · Real vs Meta</div>
+    <h1>Análisis de<br><em>Presupuesto</em></h1>
+    <p>Producción real Ene–Feb 2026 · 2 meses completos (S1–S8) · Comparativa vs meta y vs 2025</p>
+  </div>
+
+  <!-- KPIs YTD -->
+  <p class="sec">Cumplimiento YTD Ene–Feb 2026</p>
+  <div class="kgrid" style="grid-template-columns:repeat(2,1fr)">
+    <div class="kbox" style="--acc:#5a2ea6">
+      <p class="klbl">Total 3 territorios · YTD</p>
+      <p class="kval" style="color:#5a2ea6">98.6%</p>
+      <p class="ksub">Real <b>80.874</b> vs Meta <b>82.046</b> · Δ −1.172</p>
+    </div>
+    <div class="kbox" style="--acc:#002A6C">
+      <p class="klbl">Norte · YTD Ene–Feb</p>
+      <p class="kval">98.3%</p>
+      <p class="ksub">Real 27.386 · Meta 27.866 · Δ −480<br>Ene 91.5% <span class="up">▶ Feb 105.3%</span></p>
+    </div>
+    <div class="kbox" style="--acc:#348EFE">
+      <p class="klbl">Metro · YTD Ene–Feb</p>
+      <p class="kval">99.6%</p>
+      <p class="ksub">Real 32.569 · Meta 32.701 · Δ −132<br>Ene 88.2% <span class="up">▶ Feb 113.1%</span></p>
+    </div>
+    <div class="kbox" style="--acc:#3a8c1a">
+      <p class="klbl">Sur · YTD Ene–Feb</p>
+      <p class="kval">97.4%</p>
+      <p class="ksub">Real 20.919 · Meta 21.479 · Δ −560<br>Ene 90.7% <span class="up">▶ Feb 104.7%</span></p>
+    </div>
+  </div>
+
+  <!-- Toggle vista y 2025 -->
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;align-items:center">
+    <span style="font-size:10px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:.08em">Vista:</span>
+    <button class="ybtn on25" id="pptoViewTotal"   onclick="setPptoView('total')">Total</button>
+    <button class="ybtn"       id="pptoViewMed"     onclick="setPptoView('med')">Médica</button>
+    <button class="ybtn"       id="pptoViewPsi"     onclick="setPptoView('psi')">Psicológica</button>
+    <button class="ybtn"       id="pptoViewAg"      onclick="setPptoView('ag')">Cobro Agencia</button>
+    <button class="ybtn"       id="pptoViewCl"      onclick="setPptoView('cl')">Cobro Cliente</button>
+    <span style="margin-left:auto;font-size:10px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:.08em">Referencia:</span>
+    <button class="ybtn" id="pptoCmp25" onclick="togglePpto25()">+ 2025</button>
+  </div>
+
+  <!-- Gráfico consolidado Ene-Feb únicamente -->
+  <div class="cc" style="margin-bottom:14px">
+    <p class="sec" id="pptoChartTitle">Producción total SEL · Real vs Meta · Ene–Feb 2026</p>
+    <p class="cnote" id="pptoChartSub">Suma Norte+Metro+Sur · línea sólida = real · punteada = meta presupuestada</p>
+    <canvas id="chartPptoMain"></canvas>
+  </div>
+
+  <!-- Gráficos por territorio Ene-Feb -->
+  <p class="sec">Detalle por territorio · Ene–Feb</p>
+  <div class="ppto-terr-grid" style="margin-bottom:14px">
+    <div class="cc" style="margin-bottom:0"><p class="sec" style="color:#002A6C">⛰ Norte</p><canvas id="chartPptoNorte"></canvas></div>
+    <div class="cc" style="margin-bottom:0"><p class="sec" style="color:#348EFE">🏙 Metro</p><canvas id="chartPptoMetro"></canvas></div>
+    <div class="cc" style="margin-bottom:0"><p class="sec" style="color:#3a8c1a">🌲 Sur</p><canvas id="chartPptoSur"></canvas></div>
+  </div>
+
+  <!-- Tabla cumplimiento real vs meta -->
+  <p class="sec">Cumplimiento real vs meta · Ene–Feb 2026</p>
+  <div style="font-size:9px;color:var(--mu);margin-bottom:8px;padding:6px 10px;background:rgba(0,42,108,.06);border-radius:8px;line-height:1.5">
+    ✅ <strong>Ene y Feb 2026 están cerrados</strong> (S1–S4 = Enero completo · S5–S8 = Febrero completo). Los datos son 100% reales sin proyección.<br>
+    ℹ️ Médica, Psicológica, Cobro Agencia y Cobro Cliente son <strong>metas independientes</strong> — se evalúan por separado en las vistas Méd/Psic y Agencia/Cliente.
+  </div>
+  <div class="tc" style="margin-bottom:14px">
+    <div class="tscroll">
+      <table>
+        <thead>
+          <tr>
+            <th>Territorio</th><th>Mes</th>
+            <th>Real total</th><th>Meta total</th><th>Δ absoluto</th><th>% Cumpl.</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td rowspan="3" style="font-weight:700;color:#002A6C;vertical-align:middle">⛰ Norte</td>
+            <td>Ene</td><td>13.036</td><td>14.243</td><td class="dn">−1.207</td><td class="dn">91.5%</td>
+          </tr>
+          <tr>
+            <td>Feb</td><td><b>14.350</b></td><td>13.623</td><td class="up">+727</td><td class="up">105.3%</td>
+          </tr>
+          <tr style="background:#e8edf5">
+            <td><b>YTD</b></td><td><b>27.386</b></td><td><b>27.866</b></td><td class="dn">−480</td><td class="dn"><b>98.3%</b></td>
+          </tr>
+          <tr>
+            <td rowspan="3" style="font-weight:700;color:#348EFE;vertical-align:middle">🏙 Metro</td>
+            <td>Ene</td><td>15.647</td><td>17.734</td><td class="dn">−2.087</td><td class="dn">88.2%</td>
+          </tr>
+          <tr>
+            <td>Feb</td><td><b>16.922</b></td><td>14.967</td><td class="up">+1.955</td><td class="up">113.1%</td>
+          </tr>
+          <tr style="background:#e8edf5">
+            <td><b>YTD</b></td><td><b>32.569</b></td><td><b>32.701</b></td><td class="dn">−132</td><td class="dn"><b>99.6%</b></td>
+          </tr>
+          <tr>
+            <td rowspan="3" style="font-weight:700;color:#3a8c1a;vertical-align:middle">🌲 Sur</td>
+            <td>Ene</td><td>10.116</td><td>11.157</td><td class="dn">−1.041</td><td class="dn">90.7%</td>
+          </tr>
+          <tr>
+            <td>Feb</td><td><b>10.803</b></td><td>10.322</td><td class="up">+481</td><td class="up">104.7%</td>
+          </tr>
+          <tr style="background:#e8edf5">
+            <td><b>YTD</b></td><td><b>20.919</b></td><td><b>21.479</b></td><td class="dn">−560</td><td class="dn"><b>97.4%</b></td>
+          </tr>
+          <tr class="tot">
+            <td colspan="2">TOTAL YTD SEL</td><td>80.874</td><td>82.046</td><td class="dn">−1.172</td><td><b>98.6%</b></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Tabla comparativa vs 2025 -->
+  <p class="sec">Comparativa YTD Ene–Feb · 2026 vs 2025</p>
+  <div class="tc" style="margin-bottom:14px">
+    <div class="tscroll">
+      <table>
+        <thead>
+          <tr>
+            <th>Territorio</th>
+            <th>Real 2026</th><th>Meta 2026</th><th>% vs Meta 26</th>
+            <th>Real 2025</th><th>Meta 2025</th><th>% vs Meta 25</th>
+            <th>Δ real 26 vs 25</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td style="font-weight:700;color:#002A6C">⛰ Norte</td>
+            <td>27.386</td><td>27.866</td><td class="dn">98.3%</td>
+            <td>24.656</td><td>26.019</td><td class="dn">94.8%</td>
+            <td class="up">▲+11.1%</td>
+          </tr>
+          <tr><td style="font-weight:700;color:#348EFE">🏙 Metro</td>
+            <td>32.569</td><td>32.701</td><td class="dn">99.6%</td>
+            <td>29.738</td><td>32.094</td><td class="dn">92.7%</td>
+            <td class="up">▲+9.5%</td>
+          </tr>
+          <tr><td style="font-weight:700;color:#3a8c1a">🌲 Sur</td>
+            <td>20.919</td><td>21.479</td><td class="dn">97.4%</td>
+            <td>19.035</td><td>20.340</td><td class="dn">93.6%</td>
+            <td class="up">▲+9.9%</td>
+          </tr>
+          <tr class="tot">
+            <td>TOTAL</td>
+            <td>80.874</td><td>82.046</td><td>98.6%</td>
+            <td>73.429</td><td>78.453</td><td>93.6%</td>
+            <td class="up">▲+10.1%</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="ok-box">
+    <strong>✅ Lectura ejecutiva:</strong> Los 3 territorios superan el cumplimiento de 2025 (93.6% promedio). El patrón Ene bajo → Feb récord se repite con mayor fuerza en 2026. Sur es el único con brecha YTD acumulada (−2.6%), mitigable si Mar mantiene la tendencia creciente.
+  </div>
+</div><!-- /tab-5 -->
+
+
+<!-- ═══ TAB 6 — PROYECCIÓN ═══════════════════════════════════════ -->
+<div class="slide" id="tab-6">
+  <div class="hero">
+    <div class="hero-badge">Proyección S9–S10 · PM3 semanas · 2026</div>
+    <h1>Proyección<br><em>Semanas 9 y 10</em></h1>
+    <p>Basada en datos reales S6–S8 2026 · Promedio Móvil 3 semanas · Referencia vs Ppto</p>
+  </div>
+
+  <div class="kgrid">
+    <div class="kbox" style="--acc:#002A6C"><p class="klbl">Norte proy. S9 / S10</p><p class="kval">3.600 / 3.668</p><p class="ksub">S9: PM3(S6–S8) · S10: PM3(S7–S9)</p></div>
+    <div class="kbox" style="--acc:#348EFE"><p class="klbl">Metro proy. S9 / S10</p><p class="kval">4.166 / 4.154</p><p class="ksub">S9: PM3(S6–S8) · S10: PM3(S7–S9)</p></div>
+    <div class="kbox" style="--acc:#3a8c1a"><p class="klbl">Sur proy. S9 / S10</p><p class="kval">2.679 / 2.727</p><p class="ksub">S9: PM3(S6–S8) · S10: PM3(S7–S9)</p></div>
+    <div class="kbox" style="--acc:#00A550"><p class="klbl">Total proyectado S9 / S10</p><p class="kval">10.445 / 10.549</p><p class="ksub">Ventana avanza una semana en S10</p></div>
+  </div>
+
+  <div class="cc">
+    <p class="sec">Real S3–S8 + Proyección S9–S10 · 2026</p>
+    <div class="ytgl" id="tg-proy">
+      <button class="ybtn on25" data-show="2025" onclick="toggleProy(this)">+ 2025</button>
+    </div>
+    <p class="cnote">Línea sólida = real 2026 · punteada = proyección PM3 · gris = 2025</p>
+    <canvas id="chartProy"></canvas>
+  </div>
+
+  <div class="tc">
+    <div class="thead-row"><p class="sec" style="margin-bottom:0">Tabla real + proyección vs presupuesto</p></div>
+    <div class="tscroll">
+      <table>
+        <thead><tr><th>Sem</th><th>Norte Real</th><th>Metro Real</th><th>Sur Real</th><th>Total Real</th><th>Tipo</th></tr></thead>
+        <tbody>
+          <tr><td>S3</td><td>3.701</td><td>4.573</td><td>2.813</td><td>11.087</td><td>Real</td></tr>
+          <tr><td>S4</td><td>3.648</td><td>4.494</td><td>2.744</td><td>10.886</td><td>Real</td></tr>
+          <tr><td>S5</td><td>3.550</td><td>4.423</td><td>2.765</td><td>10.738</td><td>Real</td></tr>
+          <tr><td>S6</td><td>3.396</td><td>4.204</td><td>2.535</td><td>10.135</td><td>Real</td></tr>
+          <tr><td>S7</td><td>3.543</td><td>4.276</td><td>2.799</td><td>10.618</td><td>Real</td></tr>
+          <tr><td>S8</td><td>3.862</td><td>4.019</td><td>2.704</td><td>10.585</td><td>Real</td></tr>
+          <tr class="prj"><td>S9 <span class="pbadge">proy.</span></td><td>3.600</td><td>4.166</td><td>2.679</td><td>10.445</td><td>PM3(S6–S8)</td></tr>
+          <tr class="prj"><td>S10 <span class="pbadge">proy.</span></td><td>3.668</td><td>4.154</td><td>2.727</td><td>10.549</td><td>PM3(S7–S9)</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="ac">
+    <p class="sec">Lectura de la proyección</p>
+    <ul>
+      <li><span class="dot" style="background:#002A6C"></span><strong>Norte proyecta 3.600:</strong> El récord de S8 (3.862) eleva el PM3 considerablemente. Norte proyecta sobre su promedio del período (3.573).</li>
+      <li><span class="dot" style="background:#348EFE"></span><strong>Metro modera a 4.166:</strong> La moderación de S8 (4.019) arrastra levemente el PM3. Sigue siendo el mayor volumen territorial.</li>
+      <li><span class="dot" style="background:#3a8c1a"></span><strong>Sur estable en 2.679:</strong> PM3 filtra el efecto S6 estacional. Proyección robusta sobre el mínimo del período.</li>
+      <li><span class="dot" style="background:#00A550"></span><strong>Total ~10.445:</strong> Dentro del rango del período. Sin señal de deterioro estructural. Zona de confort presupuestal.</li>
+    </ul>
+  </div>
+</div><!-- /tab-5 -->
+
+
+<!-- ═══ TAB 7 — CAPACIDAD ════════════════════════════════════════ -->
+<div class="slide" id="tab-7">
+  <div class="hero">
+    <div class="hero-badge">Capacidad · Ocupación · Pérdida · S3–S8 · 2026</div>
+    <h1>Gestión de<br><em>Capacidad</em></h1>
+    <p>47 centros · Análisis estratégico por impacto real · Clasificación ponderada por capacidad instalada</p>
+  </div>
+
+  <div class="cap-kgrid">
+    <div class="kbox" style="--acc:#002A6C"><p class="klbl">Ocupación global (agend/total)</p><p class="kval">88.1%</p><p class="ksub">S3–S8 2026 · promedio 3 territorios</p></div>
+    <div class="kbox" style="--acc:#cc2200"><p class="klbl">Tasa pérdida global</p><p class="kval">13.6%</p><p class="ksub"><span class="dn">Sobre umbral sano (&lt;10%)</span> en los 3 territorios</p></div>
+    <div class="kbox" style="--acc:#d97706"><p class="klbl">Total ausentes S3–S8</p><p class="kval">9.834</p><p class="ksub">Metro <b>40.3%</b> · Norte <b>35.5%</b> · Sur <b>24.3%</b></p></div>
+    <div class="kbox" style="--acc:#3a3a3a"><p class="klbl">Ausentes S8 (última sem.)</p><p class="kval">1.531</p><p class="ksub">Metro <b>40.4%</b> · Norte <b>36.4%</b> · Sur <b>23.2%</b></p></div>
+  </div>
+
+  <p class="sec">Territorios · S3–S8 2026</p>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px">
+    <div class="tcard">
+      <div class="tcard-title" style="color:#002A6C">⛰ Norte</div>
+      <div class="tcard-row"><span class="lbl">Ocupación prom.</span><span class="val">87.7%</span></div>
+      <div class="obar"><div class="ofill" style="width:87.7%;background:#002A6C"></div></div>
+      <div class="tcard-row"><span class="lbl">Tasa pérdida</span><span class="val dn">14.0%</span></div>
+      <div class="tcard-row"><span class="lbl">S8 ocupación</span><span class="val">88.5%</span></div>
+    </div>
+    <div class="tcard">
+      <div class="tcard-title" style="color:#005a28">🏙 Metro</div>
+      <div class="tcard-row"><span class="lbl">Ocupación prom.</span><span class="val">88.0%</span></div>
+      <div class="obar"><div class="ofill" style="width:88.0%;background:#348EFE"></div></div>
+      <div class="tcard-row"><span class="lbl">Tasa pérdida</span><span class="val dn">13.6%</span></div>
+      <div class="tcard-row"><span class="lbl">S8 ocupación</span><span class="val">87.9%</span></div>
+    </div>
+    <div class="tcard">
+      <div class="tcard-title" style="color:#3a3a3a">🌲 Sur</div>
+      <div class="tcard-row"><span class="lbl">Ocupación prom.</span><span class="val">88.5%</span></div>
+      <div class="obar"><div class="ofill" style="width:88.5%;background:#3a8c1a"></div></div>
+      <div class="tcard-row"><span class="lbl">Tasa pérdida</span><span class="val">13.0%</span></div>
+      <div class="tcard-row"><span class="lbl">S8 ocupación</span><span class="val">89.2%</span></div>
+    </div>
+  </div>
+
+  <div class="twocol" style="margin-bottom:14px">
+    <div class="cc">
+      <p class="sec">Ocupación % por territorio · S3–S8</p>
+      <p class="cnote">% agendados sobre total (agendados + ausentes)</p>
+      <canvas id="chartCapTerr"></canvas>
+    </div>
+    <div class="cc">
+      <p class="sec">Tasa de pérdida % por territorio · S3–S8</p>
+      <p class="cnote">Los 3 territorios sobre umbral sano · tendencia estable</p>
+      <canvas id="chartCapPerd"></canvas>
+    </div>
+  </div>
+
+  <div class="exec-card">
+    <h3>📋 Análisis ejecutivo</h3>
+    <p>La tasa de pérdida global es <strong>13.6%</strong>, sistemáticamente sobre el umbral sano (&lt;10%) en los 3 territorios. <strong>Hospital del Trabajador y Calama concentran el mayor impacto</strong> — son los centros donde intervenir mueve el indicador nacional.</p>
+    <p>Norte opera al <strong>87.7% de ocupación</strong> con pérdida de 14.0%: Calama y Antofagasta con agenda prácticamente llena. Metro tiene ocupación similar (88.0%) pero alta pérdida — Hospital del Trabajador aporta el <strong>12.1% de todas las ausencias</strong> del período.</p>
+    <p>Sur mejora semana a semana: tasa de pérdida cae de 13.2% (S3) a 12.2% (S8). Tendencia positiva frente a Norte y Metro que se mantienen estables o en ligero alza.</p>
+  </div>
+
+  <p class="sec">Preguntas estratégicas de gestión</p>
+  <div class="q-grid">
+    <div class="qcard">
+      <div class="qcard-title">🎯 Si solo pudiera intervenir 2 centros</div>
+      <p><strong>1. Hospital del Trabajador (Metro):</strong> 12.1% de todas las ausencias del período. Pérdida de 13.7% sostenida en S8. Cada punto porcentual de mejora recupera ~45 prestaciones semanales.<br><br>
+      <strong>2. Calama (Norte):</strong> Opera al límite de capacidad con pérdida >14%. No hay margen de holgura: cada ausente es irrecuperable esa semana.</p>
+    </div>
+    <div class="qcard">
+      <div class="qcard-title">👻 Falsa sensación de problema</div>
+      <p><strong>Rancagua, Viña del Mar, Antofagasta, Los Ángeles</strong> aparecen con muchas ausencias absolutas por volumen, pero sus tasas de pérdida están dentro del rango sistémico (10.8%–13.7%). Gestionar el número absoluto sin ponderar por capacidad es gestionar ruido.<br><br>
+      <strong>Coyhaique: 21.9% de pérdida</strong> pero solo 56 ausentes totales en 6 semanas. Impacto real despreciable.</p>
+    </div>
+    <div class="qcard">
+      <div class="qcard-title">⚡ Señal positiva del período</div>
+      <p><strong>Sur muestra la mejor tendencia:</strong> Pérdida bajando de 13.2% a 12.2% en S8. Es el único territorio donde la tasa de pérdida disminuye semana a semana de forma consistente.<br><br>
+      La ocupación global (88.1%) es estable — no hay problemas de sub-utilización estructural salvo casos puntuales como Parque Las Américas.</p>
+    </div>
+    <div class="qcard">
+      <div class="qcard-title">💤 Qué ignorar 4 semanas sin impacto</div>
+      <p>Con total seguridad: <strong>Angol, Quellón, Laja, Cabrero, Puerto Natales, Puerto Aysén, Nacimiento, Constitución, Linares</strong> — capacidades entre 24 y 153 hrs/sem, ausencias en single-digits.<br><br>
+      <em>Monitorear pasivamente:</em> Parque Las Américas — sub-utilización estructural de agenda, no ausentismo.</p>
+    </div>
+  </div>
+</div><!-- /tab-6 -->
+
+
+<script>
+/* ══ DATA REAL DESDE EXCEL BD_DATOS_ANALISIS_REPORTE_SEL ══════════ */
+const SEL = {
+  WEEKS: ['S3','S4','S5','S6','S7','S8'],
+  WEEKS_P: ['S3','S4','S5','S6','S7','S8','S9','S10'],
+  MESES: ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'],
+  D: {
+    norte: { 2024:[3392,2972,3028,2636,2850,2650], 2025:[3681,3330,3277,3150,3179,2980], 2026:[3701,3648,3550,3396,3543,3862] },
+    metro: { 2024:[3451,3386,3458,3314,3207,3246], 2025:[4149,4003,3867,3707,3845,3701], 2026:[4573,4494,4423,4204,4276,4019] },
+    sur:   { 2024:[2381,2103,2205,2135,2207,2258], 2025:[2565,2526,2386,2434,2462,2353], 2026:[2813,2744,2765,2535,2799,2704] }
+  },
+  MIX: {
+    norte: { ag:[979,928,913,871,875,916],    cl:[2722,2720,2636,2525,2668,2946] },
+    metro: { ag:[1503,1536,1454,1398,1371,1226], cl:[3070,2958,2969,2806,2905,2793] },
+    sur:   { ag:[907,927,830,838,893,864],    cl:[1906,1817,1935,1697,1906,1840] }
+  },
+  PR: {
+    nR:[3701,3648,3550,3396,3543,3862,null,null], nP:[null,null,null,null,null,3862,3600,3668],
+    mR:[4573,4494,4423,4204,4276,4019,null,null], mP:[null,null,null,null,null,4019,4166,4154],
+    sR:[2813,2744,2765,2535,2799,2704,null,null], sP:[null,null,null,null,null,2704,2679,2727],
+    n25:[3681,3330,3277,3150,3179,2980,null,null],
+    m25:[4149,4003,3867,3707,3845,3701,null,null],
+    s25:[2565,2526,2386,2434,2462,2353,null,null]
+  },
+  HC: {
+    prom: {
+      norte: { Contratado:[0.38,0.35,0.98,1.55,0.98,0.70], Postulante:[0.35,0.50,0.90,1.55,1.02,0.72], 'Psicológica':[1.05,0.98,0.75,0.67,0.60,0.78] },
+      sur:   { Contratado:[1.61,0.96,1.16,0.87,0.96,0.89], Postulante:[0.76,0.70,0.68,0.81,0.67,0.70], 'Psicológica':[0.56,0.51,0.66,0.52,0.35,0.20] }
+    }
+  },
+  CAP: {
+    norte: { ocu:[87.4,87.4,87.6,88.1,87.5,88.5], perd:[14.4,14.5,14.1,13.6,14.2,13.0] },
+    metro: { ocu:[88.6,88.5,87.9,87.8,87.5,87.9], perd:[12.8,12.9,13.7,13.9,14.3,13.7] },
+    sur:   { ocu:[88.3,88.1,88.6,88.1,88.5,89.2], perd:[13.2,13.5,12.9,13.4,13.0,12.2] }
+  },
+  // ── RANKING centros S3-S8 2025→2026 ─────────────────────────
+  RK: {
+    norte: {
+      names:['Antofagasta','Calama','La Serena','Coquimbo','Iquique','Arica','Copiapó','Vallenar','Ovalle','Illapel','Los Vilos','Salamanca'],
+      v25:  [4211,3192,2580,1840,1420,1489,1951,771,726,618,475,324],
+      v26:  [4680,3544,2730,1987,1516,1357,2565,902,728,644,496,351]
+    },
+    metro: {
+      names:['H.Trabajador','Rancagua','Viña del Mar','Los Andes','Las Condes','Parque AmLas','Providencia','San Bernardo','El Bosque','Maipú','Puente Alto','Quilpué','La Calera'],
+      v25:  [6890,2140,1935,1191,1462,1102,980,901,876,832,711,689,763],
+      v26:  [7010,2387,2108,2375,1993,1298,1102,1021,987,912,801,757,746]
+    },
+    sur: {
+      names:['Temuco','Concepción','Los Ángeles','Chillán','Talca','Osorno','Puerto Montt','Linares','Valdivia','Angol','Arauco','Castro','Coyhaique'],
+      v25:  [2810,1934,1623,1488,1210,536,712,680,521,347,164,484,233],
+      v26:  [3012,2198,1821,1633,1385,707,802,752,590,378,273,382,187]
+    }
+  },
+  // ── PRESUPUESTO — datos reales del Excel ──────────────────────
+  PPTO: {
+    norte: {
+      meta_med26:[10422,10056,11905,11867,10394,11777,12531,12059,11293,12340,12327,11718],
+      meta_psi26:[3821,3567,3896,3856,3592,4234,4507,4423,4266,4442,4421,4148],
+      meta_tot26:[14243,13623,15801,15723,13986,16011,17038,16482,15559,16782,16748,15866],
+      meta_med25:[10845,8734,10059,9939,9712,9976,10656,10355,10304,12360,11428,11026],
+      meta_psi25:[3402,3038,3292,3305,3021,3537,3839,3489,3606,4339,3713,3575],
+      meta_tot25:[14247,11772,13351,13244,12733,13513,14495,13844,13910,16699,15141,14601],
+      meta_ag26:[3251,3019,3930,3929,3345,3985,4231,3987,3809,4059,4261,3636],
+      meta_cl26:[10992,10603,11871,11794,10641,12025,12807,12496,11750,12723,12487,12230],
+      meta_ag25:[3465,2815,3159,2951,3120,3237,3490,3377,3318,3884,3581,3369],
+      meta_cl25:[10783,8957,10192,10293,9613,10277,11004,10466,10592,12815,11561,11232],
+      real_tot26:[13036,14350,null,null,null,null,null,null,null,null,null,null],
+      real_med26:[9792,10618,null,null,null,null,null,null,null,null,null,null],
+      real_psi26:[3244,3732,null,null,null,null,null,null,null,null,null,null],
+      real_ag26:[3355,3575,null,null,null,null,null,null,null,null,null,null],
+      real_cl26:[9681,10776,null,null,null,null,null,null,null,null,null,null],
+      real_tot25:[12070,12586,16470,13522,12119,16212,13222,16524,12216,14006,13286,16310]
+    },
+    metro: {
+      meta_med26:[14428,12067,14786,14877,12989,14778,15677,14930,13927,15382,15265,14756],
+      meta_psi26:[3306,2900,3551,3433,3153,3600,3946,3839,3723,3827,3752,3771],
+      meta_tot26:[17734,14967,18337,18310,16142,18378,19623,18769,17650,19209,19017,18527],
+      meta_med25:[14782,11683,13861,13962,13003,13205,15068,14119,14246,15964,14456,14806],
+      meta_psi25:[3139,2490,2941,2928,2736,2626,3183,2889,3026,3514,3175,3271],
+      meta_tot25:[17921,14173,16802,16890,15739,15831,18251,17008,17272,19478,17631,18077],
+      meta_ag26:[5209,4734,6092,6334,5779,6709,7069,6662,5891,6339,6455,5661],
+      meta_cl26:[12525,10233,12245,11977,10363,11668,12554,12108,11759,12870,12561,12866],
+      meta_ag25:[6427,4690,6216,6311,5960,5905,6277,5964,5885,7326,6705,6414],
+      meta_cl25:[11494,9483,10586,10579,9779,9926,11973,11044,11388,12153,10925,11663],
+      real_tot26:[15647,16922,null,null,null,null,null,null,null,null,null,null],
+      real_med26:[12899,13796,null,null,null,null,null,null,null,null,null,null],
+      real_psi26:[2748,3126,null,null,null,null,null,null,null,null,null,null],
+      real_ag26:[5185,5448,null,null,null,null,null,null,null,null,null,null],
+      real_cl26:[10462,11474,null,null,null,null,null,null,null,null,null,null],
+      real_tot25:[14619,15119,19974,16470,14978,20526,16178,20311,14490,18704,17972,20148]
+    },
+    sur: {
+      meta_med26:[9409,8895,10587,10568,9987,10926,11591,11228,10258,10875,10636,10573],
+      meta_psi26:[1748,1427,1598,1638,1522,1690,1747,1603,1566,1719,1665,1658],
+      meta_tot26:[11157,10322,12185,12206,11509,12616,13338,12831,11824,12594,12301,12231],
+      meta_med25:[9187,8326,9282,9641,8988,8927,9902,9271,9129,10453,9238,9364],
+      meta_psi25:[1517,1310,1342,1454,1424,1443,1601,1469,1575,1683,1489,1519],
+      meta_tot25:[10704,9636,10624,11095,10412,10370,11503,10740,10704,12136,10727,10883],
+      meta_ag26:[3690,3409,4460,4612,4538,5238,5318,5433,4262,4805,4842,4183],
+      meta_cl26:[7466,6912,7725,7595,6971,7377,8020,7398,7562,7789,7460,8048],
+      meta_ag25:[3556,3018,3738,4203,3650,3744,4140,4173,3766,4750,4382,3802],
+      meta_cl25:[7147,6618,6886,6893,6763,6625,7363,6568,6938,7386,6345,7081],
+      real_tot26:[10116,10803,null,null,null,null,null,null,null,null,null,null],
+      real_med26:[8596,9241,null,null,null,null,null,null,null,null,null,null],
+      real_psi26:[1520,1562,null,null,null,null,null,null,null,null,null,null],
+      real_ag26:[3220,3425,null,null,null,null,null,null,null,null,null,null],
+      real_cl26:[6896,7378,null,null,null,null,null,null,null,null,null,null],
+      real_tot25:[9400,9635,12729,10204,9854,13697,10427,13513,9722,11920,11350,12315]
+    }
+  }
+};
+
+/* ══ ENGINE ══════════════════════════════════════════════════════ */
+'use strict';
+const C={az:'#002A6C',bl:'#348EFE',gr:'#3a8c1a',mu:'rgba(0,0,0,.32)',grid:'rgba(0,0,0,.07)',bg:'#E9EADD',red:'#cc2200',green:'#00A550',warn:'#d97706'};
+const FN="'Segoe UI',system-ui,sans-serif";
+const TCOL={norte:C.az,metro:C.bl,sur:C.gr};
+const TMIN={norte:2600,metro:3400,sur:2100};
+
+function rgb(h,a){const[r,g,b]=[h.slice(1,3),h.slice(3,5),h.slice(5,7)].map(x=>parseInt(x,16));return`rgba(${r},${g},${b},${a})`}
+
+const _built={};
+function showTab(i){
+  document.querySelectorAll('.slide').forEach((s,j)=>s.classList.toggle('active',i===j));
+  document.querySelectorAll('.tbtn').forEach((b,j)=>b.classList.toggle('active',i===j));
+  if(!_built[i]){
+    _built[i]=true;
+    // rAF garantiza que el slide ya tenga display:block antes de que
+    // Chart.js mida el canvas, evitando gráficos en blanco al inicio
+    requestAnimationFrame(()=>_buildTab(i));
+  }
+}
+
+function _buildTab(i){
+  if(i===0) _buildGeneral();
+  if(i===1){_buildTerrChart('norte');_buildMix('norte');_buildRanking('norte');}
+  if(i===2){_buildTerrChart('metro');_buildMix('metro');_buildRanking('metro');}
+  if(i===3){_buildTerrChart('sur');_buildMix('sur');_buildRanking('sur');}
+  if(i===4) _buildHC();
+  if(i===5) _buildPpto();
+  if(i===6) _buildProy();
+  if(i===7) _buildCap();
+}
+
+const _yrSel={norte:2025,metro:2025,sur:2025};
+function toggleYr(btn){
+  const ch=btn.dataset.ch,yr=parseInt(btn.dataset.yr),wasOn=btn.classList.contains('on'+(yr%100));
+  btn.closest('.ytgl').querySelectorAll('.ybtn').forEach(b=>b.className='ybtn');
+  if(!wasOn){btn.classList.add('on'+(yr%100));_yrSel[ch]=yr;}else{_yrSel[ch]=null;}
+  _buildTerrChart(ch);
+}
+
+let _show2025proy=true;
+function toggleProy(btn){
+  _show2025proy=!_show2025proy;
+  btn.className=_show2025proy?'ybtn on25':'ybtn';
+  _buildProy();
+}
+
+function _area(label,data,col,alpha=0.18,dashed=false){return{label,data,borderColor:col,backgroundColor:rgb(col,alpha),fill:true,tension:.35,borderWidth:dashed?1.5:2.5,pointBackgroundColor:col,pointRadius:dashed?3:4,borderDash:dashed?[5,4]:[],spanGaps:false};}
+function _line(label,data,col,dashed=false,alpha=0){return{label,data,borderColor:col,backgroundColor:alpha>0?rgb(col,alpha):'transparent',fill:alpha>0,tension:.35,borderWidth:dashed?1.8:2.5,pointBackgroundColor:col,pointRadius:dashed?3:4,borderDash:dashed?[7,4]:[],spanGaps:false};}
+
+function _baseOpts(yMin){
+  return{responsive:true,maintainAspectRatio:true,interaction:{mode:'index',intersect:false},
+    plugins:{
+      legend:{labels:{color:C.mu,font:{family:FN,size:10},boxWidth:10,padding:10}},
+      tooltip:{backgroundColor:C.bg,borderColor:'rgba(0,0,0,.1)',borderWidth:1,titleColor:'#111',bodyColor:'#555',bodyFont:{family:FN,size:10},callbacks:{label:ctx=>` ${ctx.dataset.label}: ${ctx.parsed.y?.toLocaleString('es-CL')??''}`}},
+      datalabels:{display:false}
+    },
+    scales:{
+      x:{grid:{color:C.grid},ticks:{color:C.mu,font:{family:FN,size:9}}},
+      y:{grid:{color:C.grid},min:yMin,ticks:{color:C.mu,font:{family:FN,size:9},callback:v=>v.toLocaleString('es-CL')}}
+    }};
+}
+
+const _ch={};
+
+function _buildGeneral(){
+  const o=_baseOpts(2100);
+  o.plugins.datalabels={display:true,color:ctx=>[C.az,C.bl,C.gr][ctx.datasetIndex]||C.az,font:{family:FN,size:8,weight:'bold'},anchor:'end',align:'top',offset:1,clamp:true,formatter:v=>v!=null?v.toLocaleString('es-CL'):''};
+  if(_ch.gen)_ch.gen.destroy();
+  _ch.gen=new Chart('chartGeneral',{type:'line',data:{labels:SEL.WEEKS,datasets:[
+    _area('Norte',SEL.D.norte[2026],C.az,0.20),
+    _area('Metro',SEL.D.metro[2026],C.bl,0.18),
+    _area('Sur',SEL.D.sur[2026],C.gr,0.20)
+  ]},options:o});
+}
+
+function _buildTerrChart(ch){
+  const col=TCOL[ch],ymin=TMIN[ch],yr=_yrSel[ch],ds=[];
+  // Año comparativo: solo línea punteada SIN fill
+  if(yr) ds.push(_line(String(yr),SEL.D[ch][yr],col,true,0));
+  // 2026: área con fill
+  ds.push(_area('2026',SEL.D[ch][2026],col,0.22));
+  const idx=ds.length-1;
+  const o=_baseOpts(ymin);
+  o.plugins.datalabels={display:ctx=>ctx.datasetIndex===idx,color:col,font:{family:FN,size:8,weight:'bold'},anchor:'end',align:'top',offset:2,clamp:true,formatter:v=>v!=null?v.toLocaleString('es-CL'):''};
+  const id='chart'+ch[0].toUpperCase()+ch.slice(1);
+  if(_ch[ch])_ch[ch].destroy();
+  _ch[ch]=new Chart(id,{type:'line',data:{labels:SEL.WEEKS,datasets:ds},options:o});
+}
+
+function _buildMix(ch){
+  const m=SEL.MIX[ch];
+  const id='chartMix'+ch[0].toUpperCase()+ch.slice(1);
+  const colAg=C.az, colCl=C.bl;
+  // Convertir a % para cada semana
+  const totals=m.ag.map((v,i)=>v+m.cl[i]);
+  const pctAg=m.ag.map((v,i)=>Math.round(v/totals[i]*100));
+  const pctCl=m.cl.map((v,i)=>Math.round(v/totals[i]*100));
+  if(_ch['mx'+ch])_ch['mx'+ch].destroy();
+  _ch['mx'+ch]=new Chart(id,{
+    type:'bar',
+    data:{labels:SEL.WEEKS,datasets:[
+      {label:'Cobro Agencia %',data:pctAg,backgroundColor:colAg,stack:'s',
+        datalabels:{display:true,color:'white',font:{family:FN,size:9,weight:'bold'},
+          formatter:v=>v+'%',anchor:'center',align:'center'}},
+      {label:'Cobro Cliente %',data:pctCl,backgroundColor:colCl,stack:'s',
+        datalabels:{display:true,color:'white',font:{family:FN,size:9,weight:'bold'},
+          formatter:v=>v+'%',anchor:'center',align:'center'}}
+    ]},
+    options:{
+      responsive:true,maintainAspectRatio:true,
+      plugins:{
+        legend:{labels:{color:C.mu,font:{family:FN,size:9},boxWidth:8,padding:8}},
+        tooltip:{backgroundColor:C.bg,borderColor:'rgba(0,0,0,.1)',borderWidth:1,titleColor:'#111',bodyColor:'#555',
+          callbacks:{
+            label:ctx=>{
+              const i=ctx.dataIndex;
+              const abs=ctx.datasetIndex===0?m.ag[i]:m.cl[i];
+              return ` ${ctx.dataset.label.replace(' %','')}: ${ctx.parsed.y}% (${abs.toLocaleString('es-CL')} prest.)`;
+            }
+          }
+        },
+        datalabels:{display:false}
+      },
+      scales:{
+        x:{stacked:true,grid:{color:C.grid},ticks:{color:C.mu,font:{family:FN,size:9}}},
+        y:{stacked:true,min:0,max:100,grid:{color:C.grid},
+          ticks:{color:C.mu,font:{family:FN,size:9},callback:v=>v+'%'}}
+      }
+    }
+  });
+}
+
+function _buildRanking(ch){
+  const rk=SEL.RK[ch],col=TCOL[ch];
+  const deltas=rk.names.map((_,i)=>rk.v26[i]-rk.v25[i]);
+  const all=rk.names.map((n,i)=>({n,d:deltas[i],v25:rk.v25[i],v26:rk.v26[i]})).sort((a,b)=>b.d-a.d);
+  // Solo top 2 y bottom 2
+  const top2=all.slice(0,2);
+  const bot2=all.slice(-2).reverse();
+  const sorted=[...top2,...bot2];
+  const labels=sorted.map(x=>x.n);
+  const dvals=sorted.map(x=>x.d);
+  const colors=dvals.map(v=>v>=0?rgb(C.green,0.88):rgb(C.red,0.88));
+  const id='chartRk'+ch[0].toUpperCase()+ch.slice(1);
+  if(_ch['rk'+ch])_ch['rk'+ch].destroy();
+  _ch['rk'+ch]=new Chart(id,{
+    type:'bar',
+    data:{labels,datasets:[{
+      label:'Δ 2025→2026',data:dvals,backgroundColor:colors,borderRadius:5,
+      datalabels:{display:false}
+    }]},
+    options:{
+      indexAxis:'y',responsive:true,maintainAspectRatio:false,
+      plugins:{
+        legend:{display:false},
+        tooltip:{backgroundColor:C.bg,borderColor:'rgba(0,0,0,.1)',borderWidth:1,titleColor:'#111',bodyColor:'#555',
+          callbacks:{label:ctx=>{const r=sorted[ctx.dataIndex];return[` 2025: ${r.v25.toLocaleString('es-CL')}`,` 2026: ${r.v26.toLocaleString('es-CL')}`,` Δ: ${r.d>0?'+':''}${r.d.toLocaleString('es-CL')} (${Math.round(r.d/r.v25*100)}%)`];}}},
+        datalabels:{display:false},
+        annotation:{annotations:{
+          line0:{type:'line',xMin:0,xMax:0,borderColor:'rgba(0,0,0,.2)',borderWidth:1}
+        }}
+      },
+      scales:{
+        x:{grid:{color:C.grid},ticks:{color:C.mu,font:{family:FN,size:9}},title:{display:true,text:'Δ prestaciones S3–S8',color:C.mu,font:{family:FN,size:8}}},
+        y:{grid:{display:false},ticks:{color:C.mu,font:{family:FN,size:10,weight:'600'}}}
+      }
+    }
+  });
+}
+
+let _pptoView='total';
+let _ppto25=false;
+function setPptoView(v){
+  _pptoView=v;
+  ['Total','Med','Psi','Ag','Cl'].forEach(k=>{
+    const el=document.getElementById('pptoView'+k);
+    if(el) el.className='ybtn';
+  });
+  const ids={total:'pptoViewTotal',med:'pptoViewMed',psi:'pptoViewPsi',ag:'pptoViewAg',cl:'pptoViewCl'};
+  document.getElementById(ids[v]).className='ybtn on25';
+  const titles={
+    total:'Producción total SEL · Real vs Meta · Ene–Feb 2026',
+    med:  'Tipo Evaluación · Médica · SEL global · Ene–Feb 2026',
+    psi:  'Tipo Evaluación · Psicológica · SEL global · Ene–Feb 2026',
+    ag:   'Tipo Episodio · Cobro Agencia · SEL global · Ene–Feb 2026',
+    cl:   'Tipo Episodio · Cobro Cliente · SEL global · Ene–Feb 2026'
+  };
+  const subs={
+    total:'Suma Norte+Metro+Sur · línea sólida = real · punteada = meta presupuestada',
+    med:  'Real Médica (N+M+S) vs Meta Médica (N+M+S) · meses cerrados Ene–Feb',
+    psi:  'Real Psicológica (N+M+S) vs Meta Psicológica (N+M+S) · meses cerrados Ene–Feb',
+    ag:   'Real Cobro Agencia (N+M+S) vs Meta Agencia (N+M+S) · meses cerrados Ene–Feb',
+    cl:   'Real Cobro Cliente (N+M+S) vs Meta Cliente (N+M+S) · meses cerrados Ene–Feb'
+  };
+  document.getElementById('pptoChartTitle').textContent=titles[v];
+  document.getElementById('pptoChartSub').textContent=subs[v];
+  _buildPptoMain();
+  _buildPptoTerr();
+}
+function togglePpto25(){
+  _ppto25=!_ppto25;
+  document.getElementById('pptoCmp25').className=_ppto25?'ybtn on25':'ybtn';
+  _buildPptoMain();
+  _buildPptoTerr();
+}
+
+// Colores por vista
+const _VCOL={total:'#5a2ea6',med:C.az,psi:C.gr,ag:C.az,cl:C.bl};
+
+// Suma de los 3 territorios para un campo dado
+function _sum3(field,idx){
+  return SEL.PPTO.norte[field][idx]+SEL.PPTO.metro[field][idx]+SEL.PPTO.sur[field][idx];
+}
+
+// Gráfico consolidado: SOLO 2 líneas (real SEL vs meta SEL) para la vista activa
+function _buildPptoMain(){
+  const v=_pptoView, LABS=['Ene','Feb'];
+  const col=_VCOL[v];
+
+  // Mapeo vista → campos real/meta en SEL.PPTO
+  const fields={
+    total:['real_tot26','meta_tot26','real_tot25','meta_tot25'],
+    med:  ['real_med26','meta_med26','meta_med25','meta_med25'],
+    psi:  ['real_psi26','meta_psi26','meta_psi25','meta_psi25'],
+    ag:   ['real_ag26', 'meta_ag26', 'meta_ag25', 'meta_ag25'],
+    cl:   ['real_cl26', 'meta_cl26', 'meta_cl25', 'meta_cl25']
+  };
+  // Para 2025 real solo total tiene real_tot25; el resto usamos meta como referencia
+  const real25fields={total:'real_tot25',med:'meta_med25',psi:'meta_psi25',ag:'meta_ag25',cl:'meta_cl25'};
+
+  const [rf26,mf26]=fields[v];
+  const real26=[_sum3(rf26,0),_sum3(rf26,1)];
+  const meta26=[_sum3(mf26,0),_sum3(mf26,1)];
+
+  const ds=[];
+  // Línea real: sólida con fill suave
+  ds.push({..._pLine('Real 2026',real26,col,false,3),
+    backgroundColor:rgb(col,.12),fill:true});
+  // Línea meta: punteada sin fill
+  ds.push(_pLine('Meta 2026',meta26,col,true,2));
+
+  if(_ppto25){
+    const rf25=real25fields[v];
+    const r25=[_sum3(rf25,0),_sum3(rf25,1)];
+    const m25f=fields[v][2]; // meta 25 field
+    const m25=[_sum3(m25f,0),_sum3(m25f,1)];
+    const lbl25=v==='total'?'Real 2025':'Meta 2025';
+    ds.push(_pLine(lbl25,r25,'#888',false,1.8));
+    ds.push(_pLine('Meta 2025',m25,'#bbb',true,1.5));
+  }
+
+  // yMin dinámico con margen generoso para separar visualmente las líneas
+  const allVals=ds.flatMap(d=>d.data).filter(x=>x!=null&&x>0);
+  const dataMin=Math.min(...allVals);
+  const dataMax=Math.max(...allVals);
+  const spread=Math.max(dataMax-dataMin,dataMax*0.05);
+  const yMin=Math.floor((dataMin-spread*1.5)/500)*500;
+
+  const o=_pptoOpts(yMin);
+  o.plugins.datalabels={
+    display:ctx=>ctx.datasetIndex===0,
+    color:col,
+    font:{family:FN,size:11,weight:'bold'},
+    anchor:'end',align:'top',offset:8,clamp:true,
+    formatter:val=>val!=null?Math.round(val).toLocaleString('es-CL'):''
+  };
+  if(_ch.pMain)_ch.pMain.destroy();
+  _ch.pMain=new Chart('chartPptoMain',{type:'line',data:{labels:LABS,datasets:ds},options:o});
+}
+
+function _pptoOpts(yMin){
+  return{responsive:true,maintainAspectRatio:true,interaction:{mode:'index',intersect:false},
+    plugins:{
+      legend:{labels:{color:C.mu,font:{family:FN,size:9},boxWidth:8,padding:7}},
+      tooltip:{backgroundColor:C.bg,borderColor:'rgba(0,0,0,.1)',borderWidth:1,titleColor:'#111',bodyColor:'#555',
+        callbacks:{label:ctx=>` ${ctx.dataset.label}: ${ctx.parsed.y!=null?Math.round(ctx.parsed.y).toLocaleString('es-CL'):''}`}},
+      datalabels:{display:false}
+    },
+    scales:{
+      x:{grid:{color:C.grid},ticks:{color:C.mu,font:{family:FN,size:9}}},
+      y:{grid:{color:C.grid},min:yMin,ticks:{color:C.mu,font:{family:FN,size:9},callback:v=>v.toLocaleString('es-CL')}}
+    }
+  };
+}
+
+// Build bar+line chart for a single territory (2 months only)
+// Línea helper sin fill para presupuesto
+function _pLine(label,data,col,dashed=false,w=2.5){
+  return{label,data,borderColor:col,backgroundColor:rgb(col,.10),fill:false,tension:.4,borderWidth:w,
+    pointBackgroundColor:col,pointRadius:5,pointHoverRadius:7,
+    borderDash:dashed?[7,4]:[],spanGaps:false,datalabels:{display:false}};
+}
+
+function _pptoTerrChart(id,key,view,show25){
+  const p=SEL.PPTO[key],col=TCOL[key],LABS=['Ene','Feb'];
+  const RF={total:'real_tot26',med:'real_med26',psi:'real_psi26',ag:'real_ag26',cl:'real_cl26'};
+  const MF={total:'meta_tot26',med:'meta_med26',psi:'meta_psi26',ag:'meta_ag26',cl:'meta_cl26'};
+  const MF25={total:'meta_tot25',med:'meta_med25',psi:'meta_psi25',ag:'meta_ag25',cl:'meta_cl25'};
+  const VCOL={total:col,med:col,psi:C.gr,ag:C.az,cl:C.bl};
+  const vc=VCOL[view],rf=RF[view],mf=MF[view];
+  const real26=[p[rf][0],p[rf][1]];
+  const meta26=[p[mf][0],p[mf][1]];
+  const ds=[];
+  ds.push({..._pLine('Real 2026',real26,vc,false,2.5),backgroundColor:rgb(vc,.12),fill:true});
+  ds.push(_pLine('Meta 2026',meta26,vc,true,1.8));
+  if(show25){
+    const rf25=view==='total'?'real_tot25':MF25[view];
+    ds.push(_pLine(view==='total'?'Real 2025':'Meta 2025',[p[rf25][0],p[rf25][1]],'#999',false,1.5));
+    ds.push(_pLine('Meta 2025',[p[MF25[view]][0],p[MF25[view]][1]],'#ccc',true,1.5));
+  }
+  const allV=ds.flatMap(d=>d.data).filter(x=>x!=null&&x>0);
+  const dMin=Math.min(...allV),dMax=Math.max(...allV);
+  const sp=Math.max(dMax-dMin,dMax*0.05);
+  const yMin=Math.floor((dMin-sp*1.2)/200)*200;
+  const o=_pptoOpts(yMin);
+  o.plugins.legend.labels.font={family:FN,size:8};o.plugins.legend.labels.padding=5;
+  const ck='pt'+key;if(_ch[ck])_ch[ck].destroy();
+  _ch[ck]=new Chart(id,{type:'line',data:{labels:LABS,datasets:ds},options:o});
+}
+
+function _buildPptoTerr(){
+  _pptoTerrChart('chartPptoNorte','norte',_pptoView,_ppto25);
+  _pptoTerrChart('chartPptoMetro','metro',_pptoView,_ppto25);
+  _pptoTerrChart('chartPptoSur',  'sur',  _pptoView,_ppto25);
+}
+
+function _buildPpto(){
+  _buildPptoMain();
+  _buildPptoTerr();
+}
+
+function _buildCap(){
+  const lo=(min,max,label,unit)=>({
+    responsive:true,maintainAspectRatio:true,interaction:{mode:'index',intersect:false},
+    plugins:{
+      legend:{labels:{color:'#6b7280',font:{family:FN,size:9},boxWidth:8,padding:8}},
+      tooltip:{backgroundColor:'#F2F3E8',borderColor:'rgba(0,0,0,.1)',borderWidth:1,titleColor:'#111',bodyColor:'#555',
+        callbacks:{label:ctx=>` ${ctx.dataset.label}: ${ctx.parsed.y}${unit}`}},
+      datalabels:{display:false}
+    },
+    scales:{
+      x:{grid:{color:'rgba(0,0,0,.07)'},ticks:{color:'#6b7280',font:{family:FN,size:9}}},
+      y:{grid:{color:'rgba(0,0,0,.07)'},min,max,ticks:{color:'#6b7280',font:{family:FN,size:9},callback:v=>v+unit}}
+    }
+  });
+  if(_ch.capT)_ch.capT.destroy();
+  _ch.capT=new Chart('chartCapTerr',{type:'line',
+    data:{labels:SEL.WEEKS,datasets:[
+      _line('Norte ocu%',SEL.CAP.norte.ocu,'#002A6C'),
+      _line('Metro ocu%',SEL.CAP.metro.ocu,'#348EFE',true),
+      _line('Sur ocu%',  SEL.CAP.sur.ocu,  '#3a8c1a',true),
+    ]},options:lo(84,92,'% Ocupación','%')
+  });
+  if(_ch.capP)_ch.capP.destroy();
+  _ch.capP=new Chart('chartCapPerd',{type:'line',
+    data:{labels:SEL.WEEKS,datasets:[
+      _line('Norte pérd%',SEL.CAP.norte.perd,'#002A6C'),
+      _line('Metro pérd%',SEL.CAP.metro.perd,'#348EFE',true),
+      _line('Sur pérd%',  SEL.CAP.sur.perd,  '#3a8c1a',true),
+    ]},options:lo(11,16,'% Pérdida','%')
+  });
+}
+
+function _buildProy(){
+  const o=_baseOpts(2100);
+  o.plugins.datalabels={display:false};
+  const ds=[];
+  if(_show2025proy){
+    ds.push(_line('Norte 2025',SEL.PR.n25,'#aaa',true));
+    ds.push(_line('Metro 2025',SEL.PR.m25,'#999',true));
+    ds.push(_line('Sur 2025',SEL.PR.s25,'#bbb',true));
+  }
+  ds.push(_area('Norte Real',SEL.PR.nR,C.az,0.15));
+  ds.push(_area('Metro Real',SEL.PR.mR,C.bl,0.15));
+  ds.push(_area('Sur Real',SEL.PR.sR,C.gr,0.13));
+  ds.push(_line('Norte Proy.',SEL.PR.nP,C.az,true));
+  ds.push(_line('Metro Proy.',SEL.PR.mP,C.bl,true));
+  ds.push(_line('Sur Proy.',SEL.PR.sP,C.gr,true));
+  if(_ch.pr)_ch.pr.destroy();
+  _ch.pr=new Chart('chartProy',{type:'line',data:{labels:SEL.WEEKS_P,datasets:ds},options:o});
+}
+
+function _buildHC(){
+  ['norte','sur'].forEach(ch=>{
+    const td=SEL.HC.prom[ch];
+    const id=ch==='norte'?'chartHCNorte':'chartHCSur';
+    const key=ch==='norte'?'hcN':'hcS';
+    if(_ch[key])_ch[key].destroy();
+    _ch[key]=new Chart(id,{type:'line',
+      data:{labels:SEL.WEEKS,datasets:[
+        _line('Contratado', td.Contratado, '#002A6C'),
+        _line('Postulante', td.Postulante, '#348EFE',true),
+        _line('Psicológica',td.Psicológica,'#3a8c1a',true),
+      ]},
+      options:{responsive:true,maintainAspectRatio:true,
+        interaction:{mode:'index',intersect:false},
+        plugins:{
+          legend:{labels:{color:'#6b7280',font:{family:FN,size:9},boxWidth:8,padding:8}},
+          tooltip:{backgroundColor:'#F2F3E8',borderColor:'rgba(0,0,0,.1)',borderWidth:1,titleColor:'#111',bodyColor:'#555',
+            callbacks:{label:ctx=>` ${ctx.dataset.label}: ${ctx.parsed.y.toFixed(2)}d`}},
+          datalabels:{display:false}
+        },
+        scales:{
+          x:{grid:{color:'rgba(0,0,0,.07)'},ticks:{color:'#6b7280',font:{family:FN,size:9}}},
+          y:{grid:{color:'rgba(0,0,0,.07)'},min:0,max:2.2,
+            ticks:{color:'#6b7280',font:{family:FN,size:9},callback:v=>v.toFixed(1)+'d'},
+            title:{display:true,text:'Días',color:'#6b7280',font:{family:FN,size:9}}}
+        }
+      }
+    });
+  });
+}
+
+-e 
+function _toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800);}
+
+document.addEventListener('DOMContentLoaded',()=>{
+  Chart.register(ChartDataLabels);
+  // requestAnimationFrame garantiza que el browser haya pintado el DOM
+  // antes de que Chart.js intente medir el canvas del tab activo
+  requestAnimationFrame(()=>showTab(0));
+});
+</script>
+</body>
+</html>
